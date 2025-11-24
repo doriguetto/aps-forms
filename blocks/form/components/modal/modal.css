@@ -3,12 +3,13 @@ body.modal-open {
 }
 
 .modal dialog {
-  --dialog-border-radius: 16px;
+  --dialog-border-radius: 2px;
 
   overscroll-behavior: none;
-  border: 1px solid #ccc;
+  border: 1px solid var(--brand-corporate-gray-light, #ccc);
   border-radius: var(--dialog-border-radius);
   width: 100vw;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
 }
 
 .modal dialog .modal-content {
@@ -19,7 +20,7 @@ body.modal-open {
 
 @media (width >= 600px) {
   .modal dialog {
-    padding: 30px;
+    padding: 24px;
     width: 80vw;
     max-width: 700px;
   }
@@ -30,7 +31,7 @@ body.modal-open {
 }
 
 .modal dialog::backdrop {
-  background-color: rgb(0 0 0 / 50%);
+  background-color: rgb(0 0 0 / 40%);
 }
 
 .modal .close-button {

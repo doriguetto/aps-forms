@@ -1,15 +1,19 @@
-/* Accordion styling */
+/* Accordion styling - Corporate PDF Theme */
 :root {
-    --color-accordion-legend-background: #F3F6FD;
-    --color-accordion-collapse-icon: #1c3fca;
-    --color-accordion-border: #ecedf3;
+    --color-accordion-legend-background: var(--brand-corporate-gray-lightest, #f5f5f5);
+    --color-accordion-collapse-icon: var(--brand-corporate-black, #000);
+    --color-accordion-border: var(--brand-corporate-gray-lighter, #e5e5e5);
 }
 
 main .form fieldset.accordion legend.accordion-legend {
-    padding: 24px 32px;
+    padding: 16px 20px;
     background-color: var(--color-accordion-legend-background);
     position: relative;
     margin-bottom: 0;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid var(--color-accordion-border);
+    border-bottom: none;
 }
 
 main .form .accordion > fieldset > legend.accordion-legend[data-visible='false'] {
@@ -19,21 +23,22 @@ main .form .accordion > fieldset > legend.accordion-legend[data-visible='false']
 }
 
 main .form .accordion > fieldset > legend::after {
-    content: '\221F';
+    content: '▼';
     color: var(--color-accordion-collapse-icon);
-    font-size: 19px;
+    font-size: 12px;
     display: inline;
     position: absolute;
-    transition: transform 0s;
-    transform: rotate(-45deg);
-    margin-top: -5px;
-    right: 22px;
+    transition: transform 0.2s ease;
+    transform: rotate(0deg);
+    margin-top: 0;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
 }
 
 main .form .accordion > fieldset.accordion-collapse > legend::after {
-    transform: rotate(-225deg);
-    margin-top: 0;
+    transform: translateY(-50%) rotate(-90deg);
 }
 
 main .form fieldset.accordion-collapse > :not(legend) {

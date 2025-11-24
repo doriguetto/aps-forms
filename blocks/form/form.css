@@ -1,108 +1,153 @@
 :root {
-    --background-color-primary: #fff;
-    --label-color: #666;
-    --border-color: #818a91;
-    --form-error-color: #ff5f3f;
-    --button-primary-color: #5f8dda;
-    --button-secondary-color: #666;
-    --button-primary-hover-color: #035fe6;
-    --form-font-size-m: 22px;
-    --form-font-size-s: 18px;
-    --form-font-size-xs: 16px;
+    /* Corporate PDF-Inspired Theme Tokens */
+    
+    /* Brand Colors - Professional Banking Palette */
+    --brand-corporate-black: #000;
+    --brand-corporate-gray-dark: #333;
+    --brand-corporate-gray: #666;
+    --brand-corporate-gray-medium: #999;
+    --brand-corporate-gray-light: #ccc;
+    --brand-corporate-gray-lighter: #e5e5e5;
+    --brand-corporate-gray-lightest: #f5f5f5;
+    --brand-corporate-white: #fff;
+    --brand-corporate-yellow: #fc0;
+    --brand-error-red: #c00;
+    --brand-success-green: #060;
+
+    /* Base Form Colors */
+    --background-color-primary: var(--brand-corporate-white);
+    --label-color: var(--brand-corporate-gray-dark);
+    --border-color: var(--brand-corporate-gray-light);
+    --form-error-color: var(--brand-error-red);
+    --button-primary-color: var(--brand-corporate-yellow);
+    --button-secondary-color: var(--brand-corporate-gray);
+    --button-primary-hover-color: #e6b800;
+    
+    /* Typography - Professional & Readable */
+    --form-font-size-m: 16px;
+    --form-font-size-s: 14px;
+    --form-font-size-xs: 12px;
+    --form-label-font-family: "Noto Sans", arial, sans-serif;
+    
+    /* Form Container */
     --form-background-color: var(--background-color-primary);
-    --form-padding: 0 10px;
+    --form-padding: 24px;
     --form-columns: 12;
-    --form-field-horz-gap: 40px;
-    --form-field-vert-gap: 20px;
-    --form-invalid-border-color: #ff5f3f;
-    --form-input-padding: 16px;
-    --form-input-font-size: 16px;
-    --form-input-disable-color: #ebebe4;
+    --form-width: 100%;
+    --form-max-width: 900px;
+    --form-container-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+    
+    /* Field Layout & Spacing */
+    --form-field-horz-gap: 20px;
+    --form-field-vert-gap: 16px;
+    --form-field-spacing: 16px;
+    --form-field-gap: 6px;
+    
+    /* Input Fields - Minimal & Professional */
+    --form-input-padding: 10px 12px;
+    --form-input-font-size: 14px;
     --form-input-border-size: 1px;
+    --form-input-border-radius: 2px;
     --form-input-border-color: var(--border-color);
+    --form-input-border-color-base: var(--brand-corporate-gray-light);
+    --form-input-border-color-hover: var(--brand-corporate-gray);
+    --form-input-border-color-focus: var(--brand-corporate-black);
+    --form-input-border-color-error: var(--brand-error-red);
     --form-input-background-color: var(--background-color-primary);
-    --form-paragraph-color: var(--label-color);
-    --form-paragraph-margin: 0 0 0.9rem;
+    --form-input-text-color: var(--brand-corporate-gray-dark);
+    --form-input-placeholder-color: var(--brand-corporate-gray-medium);
+    --form-input-min-height: 40px;
+    
+    /* Input States */
+    --form-input-focus-ring-color: rgb(0 0 0 / 10%);
+    --form-input-focus-ring-width: 2px;
+    --form-input-disable-color: var(--brand-corporate-gray-lightest);
+    --form-input-disabled-background: var(--brand-corporate-gray-lightest);
+    --form-input-disabled-border-color: var(--brand-corporate-gray-lighter);
+    --form-input-disabled-text-color: var(--brand-corporate-gray-medium);
+    --form-input-readonly-background-color: var(--brand-corporate-gray-lightest);
+    --form-input-readonly-border-color: var(--brand-corporate-gray-light);
+    --form-input-readonly-text-color: var(--brand-corporate-gray);
+    --form-invalid-border-color: var(--brand-error-red);
+    
+    /* Label Styling - Clear Hierarchy */
+    --form-label-color: var(--label-color);
+    --form-label-color-primary: var(--brand-corporate-gray-dark);
+    --form-label-font-size: 13px;
+    --form-label-font-size-primary: 13px;
+    --form-label-font-weight: 600;
+    --form-label-font-weight-primary: 600;
+    --form-label-margin-bottom: 6px;
+    
+    /* Paragraph & Help Text */
+    --form-paragraph-color: var(--brand-corporate-gray);
+    --form-paragraph-margin: 0 0 12px;
     --form-paragraph-font-style: none;
     --form-paragraph-font-size: var(--form-font-size-s);
-    --form-label-color: var(--label-color);
-    --form-label-font-size: var(--form-font-size-s);
-    --form-label-font-weight: 400;
-    --form-title-font-weight: 600;
+    --form-helper-text-color: var(--brand-corporate-gray);
+    --form-helper-text-font-size: 12px;
+    --form-helper-text-margin-top: 4px;
+    
+    /* Fieldset & Legend */
+    --form-title-font-weight: 700;
     --form-fieldset-border: 0;
     --form-fieldset-marign: 0;
     --form-fieldset-columns: 1;
-    --form-fieldset-legend-color: var(--form-label-color);
-    --form-fieldset-legend-font-size: var(--form-label-font-size);
-    --form-fieldset-legend-font-weight: var(--form-title-font-weight);
+    --form-fieldset-legend-color: var(--brand-corporate-gray-dark);
+    --form-fieldset-legend-font-size: 15px;
+    --form-fieldset-legend-font-weight: 700;
     --form-fieldset-legend-border: none;
-    --form-fieldset-legend-padding: 0;
-    --form-button-color: var(--background-color-primary);
-    --form-button-font-size: var(--form-font-size-s);
+    --form-fieldset-legend-padding: 0 0 12px 0;
+    
+    /* Buttons - Professional & Accessible */
+    --form-button-color: var(--brand-corporate-black);
+    --form-button-font-size: 14px;
+    --form-button-font-weight: 600;
     --form-button-background-color: var(--button-primary-color);
     --form-button-background-hover-color: var(--button-primary-hover-color);
-    --form-button-border: 2px solid transparent;
-    --form-button-padding: 15px 50px;
-    --form-upload-color: var(--form-label-color);
+    --form-button-border: 1px solid var(--brand-corporate-black);
+    --form-button-border-radius: 2px;
+    --form-button-padding: 12px 32px;
+    --form-button-min-width: 120px;
+    --form-submit-width: auto;
+    
+    /* Secondary Button */
+    --form-button-secondary-color: var(--brand-corporate-gray-dark);
+    --form-button-secondary-background: var(--brand-corporate-white);
+    --form-button-secondary-border: 1px solid var(--brand-corporate-gray);
+    --form-button-secondary-hover-background: var(--brand-corporate-gray-lightest);
+    
+    /* File Upload */
+    --form-upload-color: var(--brand-corporate-gray-dark);
     --form-upload-font-size: var(--form-font-size-xs);
     --form-upload-background-color: var(--background-color-primary);
-    --form-submit-width: 100%;
-    --form-width: 100%;
-    --form-wizard-border: 0;
-    --form-wizard-background-color: var(--background-color-primary);
-    --form-wizard-border-color: #757575;
-    --form-wizard-number-color: var(--button-primary-color);
-    --form-wizard-padding: 0px;
-    --form-wizard-padding-bottom: 160px;
-    --form-wizard-step-legend-padding: 10px;
-    --form-wizard-step-legend-font-size: 1.1rem;
-    --form-field-gap: 5px;
-
-    /* Card styling variables */
-    --form-card-border-color: #e0e0e0;
-    --form-card-border-radius: 4px;
-    --form-card-padding: 0.6rem 0.8rem;
+    
+    /* Error State */
+    --form-error-text-color: var(--brand-error-red);
+    --form-error-icon-size: 20px;
+    --form-input-error-icon-offset: 10px;
+    
+    /* Card/Radio/Checkbox Group Styling */
+    --form-card-border-color: var(--brand-corporate-gray-light);
+    --form-card-border-radius: 2px;
+    --form-card-padding: 12px 16px;
     --form-card-background: var(--background-color-primary);
-    --form-card-shadow: 0 1px 2px rgb(0 0 0 / 3%);
-    --form-card-hover-shadow: 0 2px 4px rgb(0 0 0 / 6%);
-    --form-card-selected-border-color: var(--button-primary-color);
-    --form-card-selected-background: #f5f9ff;
-    --form-card-selected-shadow: 0 0 0 1px var(--button-primary-color);
-    --form-card-transition: all 0.15s ease-in-out;
-
-    /* Flexible Form Template - Input Styling (Updated from Figma) */
-    --form-input-border-radius: 8px;
-    --form-input-border-color-base: #ccc;
-    --form-input-border-color-hover: #9ca3af;
-    --form-input-border-color-focus: #6366f1;
-    --form-input-border-color-error: #ef4444;
-    --form-input-focus-ring-color: rgb(99 102 241 / 20%);
-    --form-input-text-color: #666;
-    --form-input-placeholder-color: #666;
-    --form-input-disabled-background: #f3f4f6;
-    --form-input-disabled-border-color: #e5e7eb;
-    --form-input-disabled-text-color: #9ca3af;
-    --form-input-readonly-background-color: #f9fafb;
-    --form-input-readonly-border-color: #d1d5db;
-    --form-input-readonly-text-color: #4b5563;
-
-    /* Flexible Form Template - Label Styling (Updated from Figma) */
-    --form-label-font-family: "Noto Sans", sans-serif;
-    --form-label-color-primary: #666;
-    --form-label-font-size-primary: 12px;
-    --form-label-font-weight-primary: 600;
-    --form-label-margin-bottom: 8px;
-
-    /* Flexible Form Template - Helper Text (Updated from Figma) */
-    --form-helper-text-color: #666;
-    --form-helper-text-font-size: 12px;
-    --form-helper-text-margin-top: 8px;
-
-    /* Flexible Form Template - Error State */
-    --form-error-text-color: #ef4444;
-    --form-error-icon-size: 24px;
-    --form-input-error-icon-offset: 12px;
-    --form-field-spacing: 1.25rem;
+    --form-card-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+    --form-card-hover-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+    --form-card-selected-border-color: var(--brand-corporate-black);
+    --form-card-selected-background: var(--brand-corporate-gray-lightest);
+    --form-card-selected-shadow: 0 0 0 2px var(--brand-corporate-black);
+    --form-card-transition: all 0.1s ease-in-out;
+    
+    /* Wizard Styling */
+    --form-wizard-border: 1px;
+    --form-wizard-background-color: var(--background-color-primary);
+    --form-wizard-border-color: var(--brand-corporate-gray-light);
+    --form-wizard-number-color: var(--brand-corporate-black);
+    --form-wizard-padding: 0;
+    --form-wizard-padding-bottom: 40px;
+    --form-wizard-step-legend-padding: 12px 0;
+    --form-wizard-step-legend-font-size: 14px;
 }
 
 * {
@@ -127,10 +172,15 @@ main .form-container {
     background-color: var(--form-background-color);
     padding: var(--form-padding);
     width: var(--form-width);
+    max-width: var(--form-max-width);
+    margin: 0 auto;
 }
 
 main .form {
     background-color: var(--form-background-color);
+    border: 1px solid var(--brand-corporate-gray-lighter);
+    padding: var(--form-padding);
+    box-shadow: var(--form-container-shadow);
 }
 
 main .form > div:not(:first-child) {
@@ -193,17 +243,16 @@ main .form select {
     padding-bottom: 0;
 }
 
-/* Flexible Form Template - Text Input Styling */
+/* Professional Form Input Styling */
 main .form input,
 main .form textarea,
 main .form select {
     font-family: var(--form-label-font-family);
     background-color: var(--form-input-background-color);
-    border: var(--form-input-border-size) solid
-        var(--form-input-border-color-base);
+    border: var(--form-input-border-size) solid var(--form-input-border-color-base);
     width: 100%;
     height: auto;
-    min-height: 56px;
+    min-height: var(--form-input-min-height);
     color: var(--form-input-text-color);
     padding: var(--form-input-padding);
     font-size: var(--form-input-font-size);
@@ -211,7 +260,8 @@ main .form select {
     margin-top: 0;
     margin-bottom: 0;
     border-radius: var(--form-input-border-radius);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.1s ease, box-shadow 0.1s ease;
+    line-height: 1.4;
 }
 
 main .form textarea {
@@ -225,13 +275,13 @@ main .form textarea::placeholder {
 
 /* Input states: focus, disabled, hover, and error states */
 
-/* Focus state */
+/* Focus state - Professional & Subtle */
 main .form input:focus,
 main .form textarea:focus,
 main .form select:focus {
     outline: none;
     border-color: var(--form-input-border-color-focus);
-    box-shadow: 0 0 0 3px var(--form-input-focus-ring-color);
+    box-shadow: 0 0 0 var(--form-input-focus-ring-width) var(--form-input-focus-ring-color);
 }
 
 /* Disabled state */
@@ -255,13 +305,6 @@ main .form textarea:read-only {
     cursor: default;
 }
 
-/* Error state styling - higher specificity */
-main .form form .field-invalid input,
-main .form form .field-invalid textarea,
-main .form form .field-invalid select {
-    border-color: var(--form-input-border-color-error);
-}
-
 /* Hover state */
 main .form input:hover:not(:disabled, :focus),
 main .form textarea:hover:not(:disabled, :focus),
@@ -269,13 +312,16 @@ main .form select:hover:not(:disabled, :focus) {
     border-color: var(--form-input-border-color-hover);
 }
 
-main .form form .field-invalid input:focus,
-main .form form .field-invalid textarea:focus,
-main .form form .field-invalid select:focus {
+/* Error state styling - higher specificity overrides hover intentionally */
+/* stylelint-disable no-descending-specificity */
+main .form form .field-invalid input,
+main .form form .field-invalid textarea,
+main .form form .field-invalid select {
     border-color: var(--form-input-border-color-error);
-    box-shadow: 0 0 0 3px rgb(239 68 68 / 10%);
 }
+/* stylelint-enable no-descending-specificity */
 
+/* stylelint-disable-next-line no-descending-specificity */
 main .form form .field-invalid input {
     background-image: url("../../icons/error.svg");
     background-repeat: no-repeat;
@@ -285,6 +331,13 @@ main .form form .field-invalid input {
         var(--form-input-padding) + var(--form-error-icon-size) +
             var(--form-input-error-icon-offset)
     );
+}
+
+main .form form .field-invalid input:focus,
+main .form form .field-invalid textarea:focus,
+main .form form .field-invalid select:focus {
+    border-color: var(--form-input-border-color-error);
+    box-shadow: 0 0 0 var(--form-input-focus-ring-width) rgb(204 0 0 / 10%);
 }
 
 main .form form .radio-wrapper.field-invalid > input,
@@ -301,12 +354,12 @@ main .form input[type="file"] {
 
 /* Remove native number input spinners to match custom design */
 main .form input[type="number"] {
-    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 main .form input[type="number"]::-webkit-inner-spin-button,
 main .form input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
@@ -327,10 +380,11 @@ main .form fieldset:not(.checkbox-group-wrapper, .radio-group-wrapper) legend {
     border-bottom: var(--form-fieldset-legend-border);
     width: 100%;
     padding: var(--form-fieldset-legend-padding);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    line-height: 1.3;
 }
 
-/* Flexible Form Template - Label Styling */
+/* Professional Label Styling */
 main .form label,
 main .form fieldset.checkbox-group-wrapper legend,
 main .form fieldset.radio-group-wrapper legend {
@@ -340,6 +394,7 @@ main .form fieldset.radio-group-wrapper legend {
     color: var(--form-label-color-primary);
     display: block;
     margin-bottom: var(--form-label-margin-bottom);
+    line-height: 1.3;
 }
 
 main .form form .wizard > legend {
@@ -434,15 +489,16 @@ main .form form fieldset.cards > .checkbox-wrapper > label {
     box-shadow: var(--form-card-shadow);
     transition: var(--form-card-transition);
     font-weight: normal;
-    color: var(--form-label-color);
-    font-size: 0.95em;
+    color: var(--brand-corporate-gray-dark);
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 main .form form fieldset.cards > .radio-wrapper > label:hover,
 main .form form fieldset.cards > .checkbox-wrapper > label:hover {
     box-shadow: var(--form-card-hover-shadow);
-    border-color: #ccc;
-    transform: translateY(-1px);
+    border-color: var(--brand-corporate-gray);
+    transform: none;
 }
 
 main .form form fieldset.cards.horizontal {
@@ -472,11 +528,11 @@ main .form form fieldset.cards > .checkbox-wrapper > input {
 
 main .form form fieldset.cards > .radio-wrapper > input:checked ~ label,
 main .form form fieldset.cards > .checkbox-wrapper > input:checked ~ label {
-    border: 1px solid var(--form-card-selected-border-color);
+    border: 2px solid var(--form-card-selected-border-color);
     background-color: var(--form-card-selected-background);
-    box-shadow: var(--form-card-selected-shadow);
-    transform: translateY(0);
-    font-weight: 500;
+    box-shadow: none;
+    transform: none;
+    font-weight: 600;
 }
 
 main .form form fieldset.cards > .radio-wrapper > input:checked ~ label::after,
@@ -487,19 +543,20 @@ main
     > .checkbox-wrapper
     > input:checked
     ~ label::after {
-    content: "";
+    content: "✓";
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--button-primary-color);
-    border-radius: 50%;
+    width: auto;
+    height: auto;
+    color: var(--brand-corporate-black);
+    font-weight: 700;
+    font-size: 16px;
     margin-left: auto;
 }
 
 main .form form fieldset.cards > .radio-wrapper > input:focus ~ label,
 main .form form fieldset.cards > .checkbox-wrapper > input:focus ~ label {
     outline: none;
-    box-shadow: 0 0 0 1px var(--button-primary-color);
+    box-shadow: 0 0 0 2px var(--brand-corporate-black);
 }
 
 main .form .form-image-wrapper img {
@@ -545,24 +602,60 @@ main .form button {
     border: var(--form-button-border);
     padding: var(--form-button-padding);
     font-size: var(--form-button-font-size);
-    border-radius: unset;
-    width: 100%;
+    font-weight: var(--form-button-font-weight);
+    border-radius: var(--form-button-border-radius);
+    min-width: var(--form-button-min-width);
+    width: auto;
+    cursor: pointer;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 main form .file-wrapper > button {
     display: flex;
 }
 
-main .form button:hover {
-    background: var(--form-button-background-hover-color);
-}
-
 main .submit-wrapper {
     width: var(--form-submit-width);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+main .form .button-wrapper button {
+    cursor: pointer;
+}
+
+main .file-wrapper .file-description button {
+    --form-button-padding: 15px;
+
+    width: 12px;
+    height: 12px;
+    border: none;
+    text-align: center;
+    background: var(--border-color);
+    cursor: pointer;
+    position: relative;
+    border-radius: 3px;
+}
+
+main .file-wrapper .file-description button::after {
+    content: "X";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: var(--background-color-primary);
+    transform: translate(-50%, -50%);
 }
 
 main .form button:disabled {
     background-color: var(--form-input-disable-color);
+}
+
+main .form button:hover:not(:disabled) {
+    background: var(--form-button-background-hover-color);
+    border-color: var(--brand-corporate-black);
 }
 
 main .file-wrapper.decorated input[type="file"] {
@@ -614,46 +707,27 @@ main .form .file-description .file-description-name {
     flex: 1;
 }
 
-main .file-wrapper .file-description button {
-    --form-button-padding: 15px;
-
-    width: 12px;
-    height: 12px;
-    border: none;
-    text-align: center;
-    background: var(--border-color);
-    cursor: pointer;
-    position: relative;
-    border-radius: 3px;
+main .form .button-wrapper button.secondary,
+main .form .button-wrapper button[type="reset"] {
+    background: var(--form-button-secondary-background);
+    color: var(--form-button-secondary-color);
+    border: var(--form-button-secondary-border);
 }
 
-main .file-wrapper .file-description button::after {
-    content: "X";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    color: var(--background-color-primary);
-    transform: translate(-50%, -50%);
-}
-
-main .form .button-wrapper button {
-    cursor: pointer;
-}
-
-main .form .button-wrapper button:hover {
-    border: 3px solid #fff;
-    color: #fff;
-    background-color: var(--button-secondary-color);
+main .form .button-wrapper button.secondary:hover:not(:disabled),
+main .form .button-wrapper button[type="reset"]:hover:not(:disabled) {
+    background: var(--form-button-secondary-hover-background);
+    border-color: var(--brand-corporate-gray-dark);
 }
 
 main .form .button-wrapper button[disabled] {
-    cursor: auto;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 main .form .button-wrapper button[disabled]:hover {
-    border: 3px solid var(--button-secondary-color);
-    color: var(--button-secondary-color);
-    background-color: transparent;
+    background: var(--form-button-background-color);
+    border-color: var(--brand-corporate-black);
 }
 
 /** Wizard Styling */
@@ -728,7 +802,11 @@ main .form form .wizard .wizard-menu-active-item::before {
 
 @media (width >= 600px) {
     main .form button {
-        width: unset;
+        width: auto;
+    }
+    
+    main .form {
+        padding: 32px;
     }
 }
 
@@ -901,10 +979,11 @@ main .form form .checkbox-group-wrapper.horizontal .field-description {
 }
 
 main div.form-wrapper {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
+    background: var(--brand-corporate-white);
+    padding: var(--form-padding);
+    border-radius: var(--form-input-border-radius);
+    box-shadow: var(--form-container-shadow);
+    border: 1px solid var(--brand-corporate-gray-lighter);
 }
 
 /* Responsive adjustments for mobile */

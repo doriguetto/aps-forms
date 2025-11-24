@@ -44,24 +44,25 @@
         U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
         U+2215, U+FEFF, U+FFFD;
 }
+
 :root {
     /* Default body text font */
-    --body-font-family: "Noto Sans", Arial, sans-serif;
+    --body-font-family: "Noto Sans", arial, sans-serif;
 
     /* Form label and input font stacks */
-    --form-label-font-family: "Noto Sans", Arial, sans-serif;
-    --form-input-font-family: "Noto Sans", Arial, sans-serif;
+    --form-label-font-family: "Noto Sans", arial, sans-serif;
+    --form-input-font-family: "Noto Sans", arial, sans-serif;
 
     /* Font weights */
     --form-label-font-weight-primary: 500;
     --form-label-font-weight-bold: 700;
 
     /* Paragraphs and misc */
-    --form-paragraph-font-family: "Noto Sans", Arial, sans-serif;
+    --form-paragraph-font-family: "Noto Sans", arial, sans-serif;
 
     /* Support for legacy Roboto (if used somewhere) */
-    --legacy-font-family-roboto-condensed: "roboto-condensed", Arial, sans-serif;
-    --legacy-font-family-roboto: "roboto", Arial, sans-serif;
+    --legacy-font-family-roboto-condensed: "roboto-condensed", arial, sans-serif;
+    --legacy-font-family-roboto: "roboto", arial, sans-serif;
 }
 
 /* Roboto font family (legacy) */

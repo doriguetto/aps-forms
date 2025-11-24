@@ -1,11 +1,13 @@
+/* Terms and Conditions - Corporate PDF Theme */
 .tnc__text-decoration {
-    color: #969696;
-    border: 1px solid #ccc;
-    border-radius: .25rem;
+    color: var(--brand-corporate-gray, #666);
+    border: 1px solid var(--brand-corporate-gray-light, #ccc);
+    border-radius: var(--form-input-border-radius, 2px);
     max-height: 160px;
-    margin-bottom: .25rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    font-size: .875rem;
+    margin-bottom: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.5;
     overflow: auto;
+    background-color: var(--brand-corporate-gray-lightest, #f5f5f5);
 }

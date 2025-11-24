@@ -1,12 +1,14 @@
-/** rating.css **/
+/** Rating styling - Corporate PDF Theme **/
 main .form .rating {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     margin: 0;
 }
 
 main .form .rating .star {
     cursor: pointer;
+    color: var(--brand-corporate-gray-light, #ccc);
+    transition: color 0.1s ease;
 }
 
 main .form .rating.disabled .star {
@@ -14,13 +16,13 @@ main .form .rating.disabled .star {
 }
 
 main .form .rating .star.selected {
-    color: #f8d053;
+    color: var(--brand-corporate-yellow, #ffcc00);
 }
 
 main .form .rating:hover .star.hover {
-    color: #ecba24;
+    color: var(--brand-corporate-yellow, #ffcc00);
 }
 
 main .form .rating.disabled .star:not(.selected) {
-    color: #ccc;
+    color: var(--brand-corporate-gray-lighter, #e5e5e5);
 }
