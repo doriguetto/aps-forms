@@ -1,0 +1,155 @@
+---
+description: Theming and styling conventions for Adaptive Forms in Edge Delivery Services using CSS custom properties and block-based selectors.
+globs: blocks/form/**/*.css, styles/*.css, scripts/form-editor-support.css
+alwaysApply: false
+---
+
+- **High-Level Overview**
+  - Adaptive Forms in Edge Delivery Services are themed primarily via CSS custom properties (design tokens) and a block-based CSS architecture.
+  - Default styles live in `blocks/form/form.css`, with additional overrides possible in global styles (for example `styles/styles.css`) and authoring helpers like `scripts/form-editor-support.css`.
+  - Follow Adobe’s guidance in [Customize the look of your forms](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/universal-editor/style-theme-forms) to keep themes robust, performant, and compatible with the Adaptive Forms runtime.
+
+- **Use CSS Custom Properties as the Theming Layer**
+  - Define and override form appearance via CSS custom properties instead of hardcoded colors, spacing, or typography values.
+    - Prefer global tokens on `:root` for brand-level theming:
+      ```css
+      :root {
+        /* Brand palette */
+        --brand-primary: #2563eb;
+        --brand-secondary: #64748b;
+        --brand-error: #dc2626;
+
+        /* Map brand tokens into form variables */
+        --background-color-primary: #ffffff;
+        --label-color: var(--brand-secondary);
+        --border-color: #d1d5db;
+        --form-error-color: var(--brand-error);
+        --button-primary-color: var(--brand-primary);
+        --button-primary-hover-color: #1d4ed8;
+
+        /* Layout & typography tokens */
+        --form-font-size-m: 18px;
+        --form-font-size-s: 16px;
+        --form-font-size-xs: 14px;
+        --form-input-padding: 1rem;
+        --form-field-vert-gap: 1.5rem;
+        --form-padding: 2rem;
+      }
+      ```
+  - **Do** keep form-specific tokens (`--form-*`) expressed in terms of higher-level brand tokens where possible to simplify theme changes.
+  - **Don’t** duplicate raw values (for example `#2563eb`) across selectors; change the token once and let it cascade.
+  - When a variable needs to apply across all forms, define it on `:root` (global scope) rather than inside `.form`:
+    - **Correct**: `:root { --form-border-color: #d1d5db; }`
+    - **Avoid**: `.form { --form-border-color: #d1d5db; }` (this limits reuse and can be harder to override).
+
+- **Respect the `.form` Block Namespace**
+  - Treat `.form` as the primary block selector and namespace for all Adaptive Forms styling.
+    - **Preferred pattern**: `.form .text-wrapper input { … }`
+    - **Avoid**: styling bare `form`, `input`, or unscoped `.text-wrapper` outside the `.form` context (this risks leaking styles to non-form UI).
+  - Match or slightly exceed the specificity of the default styles without over-constraining selectors:
+    - **Do**: `.form .text-wrapper input { color: var(--form-text-color); }`
+    - **Avoid**: `main .form form .text-wrapper input { … }` unless there is a concrete conflict that cannot be solved otherwise.
+  - When troubleshooting “styles not applying”, prefer increasing specificity within the `.form` block instead of resorting to `!important`.
+
+- **Target Component Wrappers, Not Raw HTML Structure**
+  - Component styling should use the standardized wrapper pattern emitted by the Adaptive Forms block:
+    - Text / email / number inputs: `.form .text-wrapper input`, `.form .email-wrapper input`, `.form .number-wrapper input`
+    - Checkbox group: `.form .checkbox-group-wrapper`
+    - Radio group: `.form .radio-wrapper`
+    - Dropdown: `.form .dropdown-wrapper select`
+    - Field container: `.form .field-wrapper`
+  - **Do** rely on these wrapper classes for structure and spacing instead of DOM adjacency or tag-only selectors:
+    - **Preferred**: `.form .field-wrapper.error input { border-color: var(--form-error-color); }`
+    - **Avoid**: `.form form input + span { … }` (brittle against HTML changes).
+  - When adding new CSS, verify the corresponding component markup in `blocks/form/components/*` and align naming with existing patterns rather than introducing ad-hoc wrappers.
+
+- **Form States, Validation, and Accessibility**
+  - Style validation states using semantic classes and state attributes, backed by design tokens:
+    - Error state: `.form .field-wrapper.error input { border-color: var(--form-error-color); }`
+    - Success state: `.form .field-wrapper.success input { border-color: var(--form-success-color); }`
+    - Submitting state: `.form[data-submitting="true"] { opacity: 0.7; pointer-events: none; }`
+  - Keep focus states visible and accessible:
+    - **Do** implement custom focus rings instead of removing them:
+      ```css
+      .form .text-wrapper input:focus,
+      .form .email-wrapper input:focus,
+      .form .number-wrapper input:focus {
+        border-color: var(--brand-primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+      }
+      ```
+    - **Don’t** entirely suppress focus indication (for example `outline: none` with no alternative) as this hurts keyboard navigation and accessibility.
+  - Use disabled-state tokens for non-interactive fields instead of arbitrary gray colors:
+    - Example: `.form input:disabled { background-color: var(--form-input-disabled-background); cursor: not-allowed; }`
+
+- **Layout, Spacing, and Responsive Behavior via Variables**
+  - Drive layout and spacing through the provided form layout variables wherever possible:
+    - Width and columns: `--form-width`, `--form-columns`, `--form-submit-width`
+    - Card layout: `--form-card-border-radius`, `--form-card-padding`, `--form-card-shadow`, `--form-card-hover-shadow`
+    - Wizard layout: `--form-wizard-padding`, `--form-wizard-padding-bottom`, `--form-wizard-step-legend-padding`
+  - Example: card-style container derived from tokens:
+    ```css
+    .form {
+      background: var(--form-background-color);
+      border-radius: var(--form-card-border-radius);
+      box-shadow: var(--form-card-shadow);
+      padding: var(--form-card-padding);
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    ```
+  - Favor a mobile-first approach:
+    - Base styles should work on narrow viewports; then enhance with media queries:
+      ```css
+      .form {
+        width: 100%;
+        padding: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        .form {
+          max-width: var(--form-width);
+          padding: var(--form-padding);
+        }
+      }
+      ```
+  - **Don’t** hardcode fixed pixel widths or margins that conflict with the layout tokens, especially for core containers and fields.
+
+- **Buttons and Call-to-Action Styling**
+  - Style primary and secondary buttons using form and brand variables, not direct colors:
+    - Submit button:
+      ```css
+      .form .button-wrapper button[type="submit"] {
+        background: linear-gradient(135deg, var(--button-primary-color) 0%, var(--button-primary-hover-color) 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 1rem 2rem;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+      }
+      ```
+    - Reset / secondary actions:
+      ```css
+      .form .button-wrapper button[type="reset"] {
+        background: transparent;
+        color: var(--label-color);
+        border: 1px solid var(--border-color);
+      }
+      ```
+  - Keep hover/active states consistent with brand tokens (for example derive hover colors from `--button-primary-hover-color`).
+  - Ensure button text and background meet WCAG contrast requirements when selecting colors.
+
+- **Troubleshooting and Best Practices**
+  - **If a style does not apply**:
+    - Check selector specificity versus the default `.form` styles.
+    - Confirm you are targeting the correct wrapper class (for example `.text-wrapper`, `.field-wrapper`) and not an outdated structure.
+    - Verify variables are defined on `:root` before they are used inside `.form`.
+  - **When introducing a new theme**:
+    - Start by defining/updating global tokens on `:root` (colors, typography, spacing).
+    - Only add new selectors in `blocks/form/form.css` when the effect cannot be achieved via variable overrides alone.
+  - Keep theme-related changes centralized and well-documented in CSS comments so future updates can adjust tokens instead of touching many selectors.
+

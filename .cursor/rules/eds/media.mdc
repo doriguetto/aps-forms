@@ -1,0 +1,84 @@
+---
+description: Media asset usage, image/video patterns, and DAM integration guidelines for Edge Delivery Services pages.
+globs: blocks/**/*, styles/*.css, scripts/aem.js, scripts/scripts.js
+alwaysApply: false
+---
+
+- **Media Bus and content-addressable storage**
+  - AEM’s Media Bus provides **same-origin, cache-optimized delivery** for images and short videos using content-addressable URLs with a `media_<hash>` prefix ([AEM Media documentation](https://www.aem.live/docs/media)).
+  - Media assets are **de-duplicated** across the site; each binary is stored exactly once and referenced by its hash, which enables long-lived CDN caching and prevents brute-force discovery of filenames.
+  - Treat `media_<hash>` URLs as **immutable**: when an asset truly changes (not just metadata), a new hash/URL is generated instead of mutating the existing binary.
+
+- **Images and dynamic rendition parameters**
+  - Images copy/pasted into documents or uploaded as separate files are automatically ingested into the Media Bus and exposed via `<picture>` markup with mobile/desktop sources by default.
+  - Use **query parameters** to control dynamic image rendering in code and authored links:
+    - `width` / `height`: Target pixel dimensions for responsive renditions.
+    - `format`: Typically `webp` with a fallback to the original `png`/`jpeg`.
+    - `quality`: Compression level tuned for performance vs. fidelity.
+  - For block transforms (for example when using `createOptimizedPicture` in `scripts/aem.js`), prefer a **small mobile width (≈750px)** and a **larger desktop width (≈2000px)** consistent with AEM Media defaults.
+  - **DO:**
+    - Let the Media Bus handle resizing and format conversion instead of shipping original, over-sized assets.
+    - Keep rendition parameters in code **small and opinionated** (e.g., a tiny set of widths) rather than exposing arbitrary values to authors.
+  - **DON'T:**
+    - Hardcode `<img>` tags with large, static `src` URLs when a `<picture>` with responsive sources is available.
+    - Chain multiple image CDNs in front of the Media Bus; treat it as the authoritative image delivery layer.
+
+- **Human-friendly filenames for images**
+  - For better “Save as…” behavior and potential SEO value, you can append a human-readable filename segment to Media Bus URLs without changing the underlying asset:
+    - Pattern: `./media_<hash>/<filename>.<extension>` (for example, `./media_1645e7a92e9f8448d45e8b999afa71315cc52690b/hero-collage.png`).
+  - Choose filenames that **roughly reflect the image’s purpose or alt text** (for example, `hero-collage.png`, `form-success-illustration.png`), but do not rely on filenames for semantics at runtime.
+  - When generating or editing such URLs in authored content or scripts, **never strip or rewrite the `media_<hash>` portion**; that hash is what guarantees content-addressed caching.
+
+- **Alt text and accessibility**
+  - Only provide `alt` text when an image is **informative or functional** (for example, diagrams, icons used as buttons, form status illustrations).
+  - For **purely decorative images**, always use an **empty alt attribute** (`alt=""`) so screen readers ignore them, avoiding unnecessary noise for assistive technology users.
+  - Remember that **context matters**:
+    - The same image in two different contexts may require different `alt` text; store alt values **with the reference/usage**, not with the binary itself.
+    - When modeling content, use dedicated fields for alt text (for example, `imageAlt` with `component: "text"`) as recommended in [model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc).
+  - **DO:**
+    - Keep alt text concise and focused on what the user needs to know from the image in that specific context.
+    - Follow the broader guidance about not overloading alt text with semantics or configuration from [blocks-best-practices.mdc](mdc:.cursor/rules/eds/blocks-best-practices.mdc).
+  - **DON'T:**
+    - Duplicate surrounding visible text verbatim in the `alt` attribute.
+    - Use alt text to encode behavior flags, analytics tags, or other non-accessibility metadata.
+
+- **Centralized DAM integration approaches**
+  - You can integrate a Digital Asset Management (DAM) system like AEM Assets in two primary ways ([AEM Media documentation](https://www.aem.live/docs/media)):
+    - **Approach A – Built-in Media Bus delivery:**
+      - Authors select assets via an asset picker, but the selected image is **copied into the document or site content** and ingested into the Media Bus on paste/preview.
+      - Media is then delivered via **same-origin Media Bus URLs**, preserving the standard AEM CDN behavior.
+      - Best when simplicity and performance are key, and when image updates can follow the regular **preview + publish lifecycle** of pages/fragments.
+    - **Approach B – Asset management delivery:**
+      - Authors select assets as **external links** pointing directly to the DAM’s CDN.
+      - At runtime, links are rewritten from `<a>` to `<picture>/<img>` tags early in `scripts/scripts.js`, based on recognized DAM hostnames or URL prefixes.
+      - Best when assets must be dynamically manipulated by the DAM at request time (for example, smart crops, personalization) and **must reflect DAM changes instantly** without republishing pages.
+  - For this project, prefer **Approach A** for site shell imagery and Adaptive Form chrome whenever possible; consider **Approach B** only when:
+    - A specific DAM capability is required at request time, or
+    - The same asset is reused across many properties and must update immediately on DAM changes.
+  - Coordinate with CDN and platform owners when adopting Approach B so that DAM asset URLs are properly routed and cached as part of the main site origin.
+
+- **Videos via Media Bus and third-party streaming**
+  - Use Media Bus for **short, performance-critical MP4 videos** (for example, hero background videos above the fold) referenced as links in authored content.
+  - For long-form or high-traffic video content, prefer a **specialized streaming platform** (for example, YouTube, Vimeo) or a dedicated DAM video delivery path instead of serving large MP4 files directly from the site.
+  - When using ambient hero videos:
+    - Always provide a **poster image** that can load quickly and serve as a fallback when autoplay is disabled (for example, on mobile devices in low power mode).
+    - Ensure there is a **non-video alternative** (for example, key messaging and call-to-action in text) so the experience remains usable without video.
+  - **DO:**
+    - Use human-readable redirect URLs to Media Bus MP4 files when possible so that assets can be swapped without changing references.
+  - **DON'T:**
+    - Embed auto-playing videos without considering accessibility (for example, motion sensitivity) and performance budgets.
+
+- **PDF and SVG handling**
+  - PDF and SVG files are **not delivered via the Media Bus**; they are served as part of the regular content lifecycle.
+  - Changes to these assets follow the **standard preview and publish flow**, and they are not stored in a de-duplicated, hash-addressed fashion.
+  - Use PDFs sparingly, primarily for documents that truly need to be downloaded or printed; for content meant to be read on-screen, prefer HTML.
+  - When using SVGs inline or as `<img>`/CSS backgrounds, ensure they meet the same accessibility and performance expectations as other images (for example, appropriate `role`/`aria` attributes where needed).
+
+- **Authoring and block-level media usage**
+  - When designing or extending blocks that include media (for example, hero images, card images, form illustrations), combine this rule with:
+    - [block.mdc](mdc:.cursor/rules/eds/block.mdc) for container/item block structure.
+    - [block-item.mdc](mdc:.cursor/rules/eds/block-item.mdc) for item-level modeling.
+    - [model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc) for field types (such as `reference` + `imageAlt`), validations, and grouping.
+  - Keep block CSS aligned with responsive image behavior (for example, using `width: 100%`, `aspect-ratio`, and `object-fit: cover`) so that Media Bus renditions render predictably across breakpoints.
+  - Ensure any DOM transforms that touch `<picture>` or `<img>` elements (for example, in `scripts/aem.js` or block `decorate()` functions) **preserve instrumentation and attributes** (alt, width/height, data attributes) when swapping in optimized images.
+
