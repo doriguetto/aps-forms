@@ -181,6 +181,9 @@ function createFileHandler(allFiles, input) {
 
     attachFiles: (inputEl, files) => {
       const multiple = inputEl.hasAttribute('multiple');
+      if (!files) {
+        return;
+      }
       let newFiles = Array.from(files);
       if (!multiple) {
         allFiles.splice(0, allFiles.length);

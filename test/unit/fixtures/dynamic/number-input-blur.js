@@ -35,6 +35,8 @@ export function op(block) {
   inputEle.dispatchEvent(new Event('blur'));
 }
 
+export const opDelay = 100;
+
 export function expect(block) {
   assert.equal(getValue(block, '#numberinput-40db827550'), '$1,234.00');
 
@@ -43,5 +45,8 @@ export function expect(block) {
   const inputEle = block.querySelector('#numberinput-40db827550');
   inputEle.value = '1234567';
   inputEle.dispatchEvent(new Event('change', { bubbles: true }));
+  // Wait for async rule evaluation to complete before checking the value
+  // The display value will be updated after the blur event is triggered
+  inputEle.dispatchEvent(new Event('blur'));
   assert.equal(getValue(block, '#numberinput-40db827550'), '$1,234,567.00');
 }
