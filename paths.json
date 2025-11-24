@@ -1,4 +1,4 @@
 {
-  "mappings": ["/content/APS/:/"],
-  "includes": ["/content/APS/", "/content/dam/APS/"]
+  "mappings": ["/:/"],
+  "includes": ["/content/APS/", "/content/dam/APS/", "/content/forms/af/eds/"]
 }
