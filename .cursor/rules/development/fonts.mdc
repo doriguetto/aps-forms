@@ -1,0 +1,341 @@
+---
+description: Best practices for handling custom web fonts asynchronously to avoid UX disruption and optimize page loading performance
+globs: styles/fonts.css, styles/*.css, head.html, **/*.html
+alwaysApply: true
+---
+
+- **High-Level Overview**
+
+  - Web fonts should be loaded asynchronously to prevent render-blocking and improve perceived performance (First Contentful Paint, Largest Contentful Paint).
+  - Use a **dedicated fonts.css file** ([fonts.css](mdc:styles/fonts.css)) for all `@font-face` declarations to enable modular loading and easier maintenance.
+  - Always declare `font-display: swap` to ensure text remains visible while custom fonts load, avoiding the Flash of Invisible Text (FOIT).
+  - Preload critical font files for above-the-fold content to balance performance with visual stability.
+  - Reference modern best practices from [web.dev Font Best Practices](https://web.dev/font-best-practices/) and [MDN @font-face](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face).
+
+- **Separate fonts.css File Pattern**
+
+  - Keep all `@font-face` declarations in a **dedicated [fonts.css](mdc:styles/fonts.css)** file under `styles/`.
+  - Load fonts.css **after critical CSS** in `head.html` or via async/deferred link to prevent blocking initial render:
+    ```html
+    <!-- ✅ DO: Load fonts.css after critical styles -->
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link
+      rel="stylesheet"
+      href="/styles/fonts.css"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link rel="stylesheet" href="/styles/fonts.css" /></noscript>
+    ```
+  - This pattern loads fonts.css asynchronously but applies it immediately once loaded, while ensuring fallback for no-JS scenarios.
+  - **DON'T** inline `@font-face` rules directly in `styles.css` or `head.html` unless fonts are absolutely critical for First Paint (rare).
+
+- **Use @font-face with font-display: swap**
+
+  - Always declare `font-display: swap` to ensure fallback fonts render immediately while custom fonts download:
+    ```css
+    @font-face {
+      font-family: "Noto Sans";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap; /* ✅ Critical for performance */
+      src: url("../fonts/noto-sans-regular.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+        U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
+        U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    ```
+  - **font-display values**:
+    - `swap` (recommended): Show fallback text immediately, swap in custom font when ready. Best balance of performance and UX.
+    - `optional`: Only use custom font if available during initial load; otherwise stick with fallback. Best for non-critical fonts.
+    - `block` (avoid): Hides text up to 3s waiting for font. Causes FOIT and poor UX.
+    - `fallback`: Short block period (~100ms), then swap. Middle ground, but `swap` is usually better.
+  - **DO** use `swap` for body text and UI fonts where readability is paramount.
+  - **DON'T** use `block` or omit `font-display` (defaults to `block` in some browsers), as this creates FOIT and delays content visibility.
+
+- **Preload Critical Fonts for Above-the-Fold Content**
+
+  - Use `<link rel="preload">` in [head.html](mdc:head.html) to prioritize loading of fonts used above the fold:
+    ```html
+    <!-- ✅ DO: Preload critical fonts used in hero/header -->
+    <link
+      rel="preload"
+      href="/fonts/noto-sans-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/noto-sans-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    ```
+  - **Preload only 1-2 critical font files** (typically regular and bold weights for primary typeface used above fold). Preloading too many fonts negates the performance benefit.
+  - **ALWAYS include `crossorigin` attribute** even if fonts are same-origin; font fetches are always CORS requests in browsers.
+  - **DON'T** preload every font weight/style. Load additional weights on-demand or defer them to lazy-styles.
+
+- **Use Modern Font Formats (WOFF2 Preferred)**
+
+  - Prefer **WOFF2 format** exclusively for best compression and browser support (95%+ global support as of 2024):
+    ```css
+    /* ✅ DO: Use WOFF2 for modern browsers */
+    @font-face {
+      font-family: "Noto Sans";
+      src: url("../fonts/noto-sans-regular.woff2") format("woff2");
+    }
+    ```
+  - **DON'T** provide WOFF1, TTF, or EOT fallbacks unless legacy browser support is explicitly required (IE11 or older Android). Modern projects should serve WOFF2 only.
+  - If legacy support is needed, use progressive enhancement with `src` stack:
+    ```css
+    /* ⚠️ Only if legacy support required */
+    @font-face {
+      font-family: "Roboto";
+      src: url("../fonts/roboto-regular.woff2") format("woff2"), url("../fonts/roboto-regular.woff")
+          format("woff");
+    }
+    ```
+
+- **Subset Fonts with unicode-range**
+
+  - Use `unicode-range` to load only the character sets needed for your content, reducing file size:
+    ```css
+    @font-face {
+      font-family: "Noto Sans";
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153; /* Latin subset */
+      src: url("../fonts/noto-sans-regular.woff2") format("woff2");
+    }
+    ```
+  - **Best for multi-language sites**: Load Latin subset by default, defer Cyrillic/CJK subsets until needed.
+  - Reference existing subsets in [fonts.css](mdc:styles/fonts.css) for consistent ranges across font families.
+  - **DON'T** create overly granular unicode-range splits; aim for 2-3 practical subsets (e.g., Latin, Latin Extended, Symbols).
+
+- **Limit Font Weights and Styles**
+
+  - Only load font weights and styles **actually used** in the design system:
+    ```css
+    /* ✅ DO: Load only necessary weights */
+    @font-face {
+      font-weight: 400; /* regular */
+    }
+    @font-face {
+      font-weight: 600; /* semibold */
+    }
+    @font-face {
+      font-weight: 700; /* bold */
+    }
+    ```
+  - **DON'T** load full font families (100-900 weights) unless required. Each weight is a separate HTTP request and render delay.
+  - Prefer **variable fonts** when available for flexible weight/style control with a single file:
+    ```css
+    @font-face {
+      font-family: "Inter Variable";
+      font-weight: 100 900; /* Variable font supports full range */
+      src: url("../fonts/inter-variable.woff2") format("woff2");
+    }
+    ```
+  - Variable fonts reduce total file size vs multiple static weights, but verify browser support for your audience.
+
+- **Define Robust Font-Family Fallback Stacks**
+
+  - Always specify **system font fallbacks** that closely match custom font metrics to minimize layout shift:
+    ```css
+    :root {
+      /* ✅ DO: Provide metric-matched fallback stack */
+      --font-family-primary: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+        sans-serif;
+      --font-family-legacy: roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    ```
+  - Use CSS custom properties for font stacks to enable theming and easy global updates (see [theming.mdc](mdc:.cursor/rules/eds-forms/theming.mdc)).
+  - **DON'T** rely on single custom font without fallback; always include system fonts for resilience.
+
+- **Async Loading Strategy**
+
+  - **Preferred pattern**: Load fonts.css via async link with media toggle (shown above) or via `<link rel="preload" as="style">` followed by async script injection.
+  - For advanced scenarios, use JavaScript-based font loading with Font Loading API for granular control:
+    ```javascript
+    // ✅ DO: Use Font Loading API for critical fonts
+    if ("fonts" in document) {
+      Promise.all([
+        document.fonts.load("400 1em Noto Sans"),
+        document.fonts.load("700 1em Noto Sans"),
+      ]).then(() => {
+        document.documentElement.classList.add("fonts-loaded");
+      });
+    }
+    ```
+  - Pair with CSS to progressively enhance typography:
+    ```css
+    body {
+      font-family: system-ui, sans-serif; /* Fallback */
+    }
+    .fonts-loaded body {
+      font-family: "Noto Sans", system-ui, sans-serif; /* Custom font */
+    }
+    ```
+  - **DON'T** use this pattern unless you need precise control over font loading timing. Simple `font-display: swap` handles most cases.
+
+- **Avoid Render-Blocking Font Loads**
+
+  - **NEVER** place `<link rel="stylesheet" href="fonts.css">` synchronously in `<head>` before critical CSS unless fonts are required for First Paint.
+  - **NEVER** import fonts.css from main styles.css with synchronous `@import`:
+    ```css
+    /* ❌ DON'T: Blocks render */
+    @import url("/styles/fonts.css");
+    ```
+  - If fonts must be in main stylesheet bundle, ensure build pipeline bundles and minifies them together, and font files are preloaded.
+
+- **Self-Hosting vs CDN Fonts (Google Fonts, Adobe Fonts)**
+
+  - **Prefer self-hosting** fonts ([fonts/](mdc:fonts/)) for:
+    - Faster loading (same origin, no extra DNS/SSL/connection overhead)
+    - GDPR compliance (no third-party tracking)
+    - Greater control over caching, subsetting, and format
+  - When using Google Fonts or Adobe Fonts:
+    - Use `&display=swap` parameter: `https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap`
+    - Preconnect to CDN to reduce connection latency:
+      ```html
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      ```
+  - **DON'T** mix self-hosted and CDN fonts unnecessarily; pick one strategy per project for consistency.
+
+- **Testing and Performance Metrics**
+
+  - Measure font loading impact on Core Web Vitals:
+    - **LCP (Largest Contentful Paint)**: Ensure hero text doesn't delay LCP by using `font-display: swap` and preloading critical fonts.
+    - **CLS (Cumulative Layout Shift)**: Match fallback font metrics to custom font to minimize reflow when fonts swap.
+    - **FCP (First Contentful Paint)**: Ensure text renders immediately with fallback fonts.
+  - Use Chrome DevTools Network tab to verify:
+    - Fonts load asynchronously (not blocking HTML/CSS parsing)
+    - Critical fonts have high priority via preload
+    - No duplicate font requests (check cache headers)
+  - Use Lighthouse/PageSpeed Insights to validate:
+    - "Ensure text remains visible during webfont load" (should pass with `font-display: swap`)
+    - "Preload key requests" (critical fonts preloaded)
+    - "Properly size text" (CLS from font swaps minimized)
+
+- **Maintenance and Best Practices**
+
+  - **Audit fonts regularly**: Remove unused weights/styles when design evolves.
+  - **Keep fonts.css linted**: Use Stylelint ([tech-stack.mdc](mdc:.cursor/rules/eds-forms/tech-stack.mdc)) to enforce consistent @font-face formatting.
+  - **Document font stack decisions**: When adding new fonts, document in [fonts.css](mdc:styles/fonts.css) comments why each weight/style is needed.
+  - **Coordinate with [theming.mdc](mdc:.cursor/rules/eds-forms/theming.mdc)**: Font loading strategy should align with CSS custom properties for font families and fallback stacks.
+
+- **Common Pitfalls to Avoid**
+
+  - ❌ **Blocking font loads**: Synchronous font.css in head before critical styles
+  - ❌ **Missing font-display**: Causes FOIT, hurts FCP and user experience
+  - ❌ **Over-preloading**: Preloading 5+ fonts negates performance gains
+  - ❌ **Wrong crossorigin**: Forgetting `crossorigin` on preload breaks font loading
+  - ❌ **No fallback stack**: Relying solely on custom font without system fallback
+  - ❌ **Loading unused weights**: Including font files never referenced in CSS
+  - ❌ **Ignoring CLS**: Fallback fonts with drastically different metrics cause layout shift
+
+- **Quick Reference Checklist**
+
+  - ✅ Separate `@font-face` declarations in [fonts.css](mdc:styles/fonts.css)
+  - ✅ Load fonts.css asynchronously after critical CSS
+  - ✅ Use `font-display: swap` on all @font-face rules
+  - ✅ Preload 1-2 critical fonts for above-fold content
+  - ✅ Use WOFF2 format exclusively (unless legacy support required)
+  - ✅ Subset fonts with `unicode-range` where appropriate
+  - ✅ Define robust system font fallback stacks
+  - ✅ Limit font weights/styles to only what's used
+  - ✅ Test with Lighthouse for font loading best practices
+  - ✅ Self-host fonts when possible for performance and privacy
+
+- **Example: Complete Async Font Loading Setup**
+
+**[head.html](mdc:head.html):**
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Preload critical fonts -->
+<link
+  rel="preload"
+  href="/fonts/noto-sans-regular.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link
+  rel="preload"
+  href="/fonts/noto-sans-semibold.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+<!-- Critical styles (blocking) -->
+<link rel="stylesheet" href="/styles/styles.css" />
+
+<!-- Async font loading (non-blocking) -->
+<link
+  rel="stylesheet"
+  href="/styles/fonts.css"
+  media="print"
+  onload="this.media='all'"
+/>
+<noscript><link rel="stylesheet" href="/styles/fonts.css" /></noscript>
+
+<!-- Scripts (deferred) -->
+<script src="/scripts/aem.js" type="module"></script>
+<script src="/scripts/scripts.js" type="module"></script>
+```
+
+**[styles/fonts.css](mdc:styles/fonts.css):**
+
+```css
+/* Noto Sans - Regular (400) */
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/noto-sans-regular.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+/* Noto Sans - Semibold (600) */
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/noto-sans-semibold.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+```
+
+**[styles/styles.css](mdc:styles/styles.css):**
+
+```css
+:root {
+  /* Define font stack with fallbacks */
+  --font-family-primary: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-regular);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--font-weight-semibold);
+}
+```

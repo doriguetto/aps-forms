@@ -1,10 +1,11 @@
 ---
 description: Conventions for defining Helix block items using core/franklin/components/block/v1/block/item (Card example).
-globs: blocks/cards/_cards.json
-alwaysApply: false
+globs: blocks/**/*
+alwaysApply: true
 ---
 
 - **Item definition (`core/franklin/components/block/v1/block/item`)**
+
   - Define each block item in a `definitions[]` entry with:
     - `title`: Human‑readable, typically **singular** (e.g., `"Card"`).
     - `id`: Lowercase singular identifier for the item type (e.g., `"card"`).
@@ -33,6 +34,7 @@ alwaysApply: false
   ```
 
 - **Model configuration for items (`models[]`)**
+
   - Each item definition must have a corresponding `models[]` entry:
     - `id`: Matches the item `id` (e.g., `"card"`).
     - `fields`: Array of field descriptors ordered as they appear in the authoring UI/runtime (see [model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc) for full field configuration options and validation rules).
@@ -74,6 +76,7 @@ alwaysApply: false
   ```
 
 - **Filter integration between containers and items**
+
   - Container filters (see `[block.mdc](mdc:.cursor/rules/eds/block.mdc)`) must reference item `id`s:
     - `filters[].id`: Tied to the container block (e.g., `"cards"`).
     - `filters[].components`: Includes each item `id` that can be placed inside the container (e.g., `"card"`).
@@ -94,5 +97,3 @@ alwaysApply: false
   - When extending or creating new `block/item` definitions:
     - Mirror the Card pattern—add a `definitions[]` entry, a matching `models[]` entry, and update the relevant container `filters[].components`.
     - Verify that any new fields are reflected in the container’s markup/CSS, especially if the DOM transform (e.g., in `cards.js`) assumes a particular structure.
-
-

@@ -1,7 +1,7 @@
 ---
 description: Overview of the APS Forms tech stack, key npm dependencies, their versions, and best‑practice guidance.
 globs: **/*
-alwaysApply: false
+alwaysApply: true
 ---
 
 - **Core Runtime & Adobe Forms Stack**

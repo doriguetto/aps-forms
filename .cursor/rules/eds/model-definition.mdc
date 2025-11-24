@@ -1,16 +1,18 @@
 ---
 description: Guidelines for defining Universal Editor model definitions, fields, and component types for Edge Delivery Services blocks.
-globs: blocks/**/*, models/_*.json, component-definition.json, component-models.json
-alwaysApply: false
+globs: blocks/**/*.json, models/*.json
+alwaysApply: true
 ---
 
 - **Model definition basics**
+
   - Universal Editor models describe the editable properties for a component and how they appear in the properties panel.
   - A model file is a JSON array of model objects, each with:
     - `id`: Unique identifier for the model (for example, a block or item id such as `"card"` or `"teaser"`).
     - `fields`: Array of field configurations that drive the Universal Editor UI.
- 
+
 - **Field configuration shape**
+
   - Each entry in `fields[]` follows the general shape from Adobe’s Universal Editor model definition:
     - `component` (**required**): Component type used to render the field in the properties panel (for example, `"text"`, `"richtext"`, `"number"`, `"boolean"`, `"reference"`, `"aem-content"`, `"aem-tag"`, `"select"`, `"radio-group"`, `"checkbox-group"`, `"multiselect"`, `"tab"`, `"container"`).
     - `name` (**required**): Property name or nested path where the value is persisted (for example, `"textContent_text"` or `"teaser/image/fileReference"`).
@@ -32,6 +34,7 @@ alwaysApply: false
     - Depend on `value` for live content; treat it strictly as an initial default.
 
 - **Common component types and their validation**
+
   - **Text (`"text"`)**
     - Single-line text input.
     - Typical validation options:
@@ -75,6 +78,7 @@ alwaysApply: false
       - Items after a `tab` belong to that tab until the next `tab` component.
 
 - **Field naming and grouping patterns (project conventions)**
+
   - **Group prefixes for layout-aware grouping**:
     - Use prefixes such as `textContent_` in `name` to logically group fields that should render together (for example, `textContent_text`, `textContent_cta`, `textContent_ctaText`).
     - In this project, grouped names are often collapsed by the Universal Editor into a single DOM structure (for example, a `<div>` grouping multiple text fields or an `<a>` built from URL + label fields). See block-specific guidance in [block.mdc](mdc:.cursor/rules/eds/block.mdc).
@@ -94,4 +98,3 @@ alwaysApply: false
   - **Compatibility with Adobe guidance**:
     - Align new models with Adobe’s documented field shapes and component types to keep the Universal Editor behavior predictable ([AEM field-types](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/field-types?lang=en#aem-tag)).
     - When introducing new patterns not covered here, consider updating this rule with concrete examples from the codebase.
-

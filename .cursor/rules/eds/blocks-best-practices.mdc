@@ -1,10 +1,11 @@
 ---
 description: Best practices for designing and using blocks based on David’s Model for AEM authoring and JCR content modeling.
-globs: blocks/**/*, models/_section.json, models/_component-definition.json
-alwaysApply: false
+globs: blocks/**/*.json, models/*.json
+alwaysApply: true
 ---
 
 - **Authoring‑first block design (AEM.live David’s Model)**
+
   - **Avoid nested blocks**; table‑in‑table structures are extremely hard to manage in Word/Google Docs—use fragments or auto‑blocked links instead when you need composition.
   - **Limit row/column spans** inside block tables; non‑trivial merged cells are a smell that the model is too complex for typical authors.
   - Always model URLs as **fully‑qualified links** (protocol + host + path); let code strip or normalize them as needed instead of expecting authors to think in relative URLs.
@@ -22,4 +23,3 @@ alwaysApply: false
 - **How this rule interacts with existing EDS rules**
   - Use these principles to decide **when to introduce a new block at all**, and then apply `[block.mdc](mdc:.cursor/rules/eds/block.mdc)` and `[model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc)` to define the block’s JSON model and field structure.
   - When updating existing blocks, validate that changes **improve authoring simplicity** (fewer blocks/variants, simpler tables, clearer filenames/URLs) in addition to meeting visual or functional requirements.
-

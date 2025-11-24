@@ -15,8 +15,8 @@
     --form-field-horz-gap: 40px;
     --form-field-vert-gap: 20px;
     --form-invalid-border-color: #ff5f3f;
-    --form-input-padding: 0.75rem 0.6rem;
-    --form-input-font-size: 1rem;
+    --form-input-padding: 16px;
+    --form-input-font-size: 16px;
     --form-input-disable-color: #ebebe4;
     --form-input-border-size: 1px;
     --form-input-border-color: var(--border-color);
@@ -69,26 +69,39 @@
     --form-card-selected-background: #f5f9ff;
     --form-card-selected-shadow: 0 0 0 1px var(--button-primary-color);
     --form-card-transition: all 0.15s ease-in-out;
-    --form-input-border-radius: 0.5rem;
-    --form-input-border-color-base: #d1d5db;
+
+    /* Flexible Form Template - Input Styling (Updated from Figma) */
+    --form-input-border-radius: 8px;
+    --form-input-border-color-base: #ccc;
     --form-input-border-color-hover: #9ca3af;
     --form-input-border-color-focus: #6366f1;
     --form-input-border-color-error: #ef4444;
     --form-input-focus-ring-color: rgb(99 102 241 / 20%);
-    --form-input-text-color: #1f2937;
-    --form-input-placeholder-color: #9ca3af;
+    --form-input-text-color: #666;
+    --form-input-placeholder-color: #666;
     --form-input-disabled-background: #f3f4f6;
     --form-input-disabled-border-color: #e5e7eb;
     --form-input-disabled-text-color: #9ca3af;
-    --form-label-color-primary: #374151;
-    --form-label-font-size-primary: 0.875rem;
-    --form-label-font-weight-primary: 500;
-    --form-label-margin-bottom: 0.375rem;
-    --form-helper-text-color: #6b7280;
-    --form-helper-text-font-size: 0.75rem;
-    --form-helper-text-margin-top: 0.375rem;
+    --form-input-readonly-background-color: #f9fafb;
+    --form-input-readonly-border-color: #d1d5db;
+    --form-input-readonly-text-color: #4b5563;
+
+    /* Flexible Form Template - Label Styling (Updated from Figma) */
+    --form-label-font-family: "Noto Sans", sans-serif;
+    --form-label-color-primary: #666;
+    --form-label-font-size-primary: 12px;
+    --form-label-font-weight-primary: 600;
+    --form-label-margin-bottom: 8px;
+
+    /* Flexible Form Template - Helper Text (Updated from Figma) */
+    --form-helper-text-color: #666;
+    --form-helper-text-font-size: 12px;
+    --form-helper-text-margin-top: 8px;
+
+    /* Flexible Form Template - Error State */
     --form-error-text-color: #ef4444;
-    --form-error-icon-size: 1rem;
+    --form-error-icon-size: 24px;
+    --form-input-error-icon-offset: 12px;
     --form-field-spacing: 1.25rem;
 }
 
@@ -142,6 +155,7 @@ main .form form fieldset fieldset {
 
 /* Flexible Form Template - Helper Text & Error Messages */
 main .form .field-description {
+    font-family: var(--form-label-font-family);
     color: var(--form-helper-text-color);
     font-size: var(--form-helper-text-font-size);
     margin-top: var(--form-helper-text-margin-top);
@@ -183,11 +197,13 @@ main .form select {
 main .form input,
 main .form textarea,
 main .form select {
+    font-family: var(--form-label-font-family);
     background-color: var(--form-input-background-color);
     border: var(--form-input-border-size) solid
         var(--form-input-border-color-base);
     width: 100%;
-    height: 42px;
+    height: auto;
+    min-height: 56px;
     color: var(--form-input-text-color);
     padding: var(--form-input-padding);
     font-size: var(--form-input-font-size);
@@ -228,6 +244,17 @@ main .form select:disabled {
     cursor: not-allowed;
 }
 
+/* Read-only state */
+main .form input[readonly],
+main .form input:read-only,
+main .form textarea[readonly],
+main .form textarea:read-only {
+    background-color: var(--form-input-readonly-background-color);
+    border-color: var(--form-input-readonly-border-color);
+    color: var(--form-input-readonly-text-color);
+    cursor: default;
+}
+
 /* Error state styling - higher specificity */
 main .form form .field-invalid input,
 main .form form .field-invalid textarea,
@@ -249,6 +276,17 @@ main .form form .field-invalid select:focus {
     box-shadow: 0 0 0 3px rgb(239 68 68 / 10%);
 }
 
+main .form form .field-invalid input {
+    background-image: url("../../icons/error.svg");
+    background-repeat: no-repeat;
+    background-size: var(--form-error-icon-size);
+    background-position: right var(--form-input-padding) center;
+    padding-right: calc(
+        var(--form-input-padding) + var(--form-error-icon-size) +
+            var(--form-input-error-icon-offset)
+    );
+}
+
 main .form form .radio-wrapper.field-invalid > input,
 main .form form .checkbox-wrapper.field-invalid > input {
     outline: 1px solid var(--form-error-color);
@@ -259,6 +297,17 @@ main .form input[type="file"] {
     padding-inline-start: 0;
     background: unset;
     color: unset;
+}
+
+/* Remove native number input spinners to match custom design */
+main .form input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+main .form input[type="number"]::-webkit-inner-spin-button,
+main .form input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 main .form input[type="checkbox"],
@@ -285,6 +334,7 @@ main .form fieldset:not(.checkbox-group-wrapper, .radio-group-wrapper) legend {
 main .form label,
 main .form fieldset.checkbox-group-wrapper legend,
 main .form fieldset.radio-group-wrapper legend {
+    font-family: var(--form-label-font-family);
     font-weight: var(--form-label-font-weight-primary);
     font-size: var(--form-label-font-size-primary);
     color: var(--form-label-color-primary);

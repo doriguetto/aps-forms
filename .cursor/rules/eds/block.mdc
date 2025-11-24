@@ -1,7 +1,7 @@
 ---
 description: Conventions for defining Helix block containers using core/franklin/components/block/v1/block (Cards example).
-globs: blocks/cards/_cards.json, blocks/cards/cards.js, blocks/cards/cards.css
-alwaysApply: false
+globs: blocks/**/*
+alwaysApply: true
 ---
 
 - **Block container definition (`core/franklin/components/block/v1/block`)**
