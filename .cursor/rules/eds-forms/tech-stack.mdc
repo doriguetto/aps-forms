@@ -1,0 +1,133 @@
+---
+description: Overview of the APS Forms tech stack, key npm dependencies, their versions, and best‑practice guidance.
+globs: **/*
+alwaysApply: false
+---
+
+- **Core Runtime & Adobe Forms Stack**
+
+  - **@aemforms/af-core@0.22.150**
+    - Provides the core Adaptive Forms runtime used by the `blocks/form/*` components.
+    - **Best practices:**
+      - Keep this in sync with Adobe’s recommended version in upstream boilerplates before upgrading.
+      - When upgrading, run both unit (`npm run test:unit`) and e2e (`npm run test:e2e`) suites to catch behavioral changes.
+  - **@aemforms/af-formatters@0.22.150**
+    - Formatters for Adaptive Forms field values (dates, numbers, etc.).
+    - **Best practices:**
+      - Prefer built‑in formatters where possible instead of rolling custom formatting logic in components.
+      - After upgrades, validate date/number formatting in critical business flows via targeted tests in `test/unit/fixtures` and `test/e2e`.
+  - **@aemforms/af-custom-functions@1.0.14**
+    - Source for custom rule functions copied into `blocks/form/rules/functions.js` via the `update:functions` script.
+    - **Best practices:**
+      - Run `npm run update:functions` after bumping this dependency so the runtime copy stays in sync.
+      - Avoid editing generated `functions.js` directly; prefer contributing upstream or wrapping via project‑specific helpers.
+  - **@adobe/json-formula@0.1.50**
+    - JSON Formula engine used by the rules system (e.g., `blocks/form/rules-doc/*`, rule formulas).
+    - **Best practices:**
+      - When updating, re‑build with `npm run update:formula` and re‑run `test:unit` to validate rule evaluation.
+      - Keep rule expressions declarative; avoid embedding complex imperative logic where a formula or custom function is more appropriate.
+
+- **Testing Stack**
+
+  - **mocha@10.2.0**
+    - Primary unit/integration test runner as configured in `package.json` (`test/**/*.test.js`).
+    - **Best practices:**
+      - Use `test/unit/setup-env.js` for shared test setup instead of duplicating boilerplate.
+      - Prefer `async/await` and `chai` assertions for readability; avoid relying on side‑effect ordering between tests.
+  - **chai@5.1.0**
+    - Assertion library used throughout tests.
+    - **Best practices:**
+      - Use `expect`/`assert` consistently across the codebase for predictable style.
+      - When adding new helpers, colocate them in `test/unit/testUtils.js` or `test/e2e/utils.js`.
+  - **@playwright/test@^1.43.1**
+    - E2E browser automation framework used by tests in `test/e2e`.
+    - **Best practices:**
+      - Pin the major/minor version carefully; breaking changes can affect fixtures and config in `playwright.config.js`.
+      - Use Playwright fixtures (`test/e2e/fixtures.js`) and page objects (`test/e2e/main/page/*`) to keep scenarios maintainable.
+  - **@testing-library/dom@9.3.4**, **@testing-library/user-event@14.3.0**
+    - DOM‑level testing helpers for interaction‑focused unit tests.
+    - **Best practices:**
+      - Prefer queries that reflect user behavior (e.g., `getByRole`, `getByLabelText`) rather than brittle selectors.
+      - Use `user-event` over direct `dispatchEvent` calls for higher‑fidelity interaction tests.
+
+- **Linting & Code Quality**
+
+  - **eslint@8.57.1**, **@babel/eslint-parser@7.25.9**
+    - JavaScript linting stack configured via `npm run lint:js`.
+    - **Best practices:**
+      - Run `npm run lint` locally before committing to keep CI noise low.
+      - Use the Babel parser for modern syntax; if introducing new language features, confirm parser support first.
+  - **eslint-config-airbnb-base@15.0.0**, **eslint-plugin-import@2.31.0**
+    - Base style guide and import rules.
+    - **Best practices:**
+      - Follow import ordering/naming conventions to reduce churn in diffs.
+      - Use explicit file extensions where required by the config to avoid import resolution issues with ESM.
+  - **eslint-plugin-json@3.1.0**
+    - Linting for JSON files (e.g., models under `models/` and `blocks/form/models/`).
+    - **Best practices:**
+      - Keep JSON models machine‑friendly (no comments), and rely on linting to catch structural issues early.
+  - **eslint-plugin-xwalk@github:adobe-rnd/eslint-plugin-xwalk#v0.1.3**
+    - Custom ESLint rules for cross‑walk tests and patterns in `test/e2e/x-walk/*`.
+    - **Best practices:**
+      - When updating this plugin, run the x‑walk suite to ensure custom rules still match expectations.
+      - Use rule autofixes where available to keep cross‑walk tests consistent.
+  - **stylelint@16.12.0**, **stylelint-config-standard@36.0.1**
+    - CSS linting for `blocks/**/*.css` and `styles/*.css` via `npm run lint:css`.
+    - **Best practices:**
+      - Prefer project‑wide CSS conventions (naming, ordering) enforced by Stylelint rather than ad‑hoc per‑file styles.
+      - Keep custom overrides minimal and documented in the Stylelint config.
+
+- **Build & Tooling**
+
+  - **rollup@^2.79.1**, **rollup-plugin-cleanup@^3.2.1**, **rollup-plugin-license@^3.0.1**, **rollup-plugin-terser@^7.0.2**
+    - Bundling pipeline for Adaptive Forms core, formatters, and JSON Formula (`rollup/*` configs).
+    - **Best practices:**
+      - Use the provided `update:*` scripts (`update:core`, `update:formatters`, `update:formula`) instead of invoking Rollup manually.
+      - After changing Rollup configs, validate that bundle outputs remain ESM‑compatible (per `"type": "module"` in `package.json`).
+  - **merge-json-cli@1.0.4**
+    - Utility to assemble `component-models.json`, `component-definition.json`, and `component-filters.json` from `models/_*.json`.
+    - **Best practices:**
+      - Always run `npm run build:json` before tests that depend on merged model files.
+      - Treat `_`‑prefixed JSON files as sources of truth; avoid editing the generated top‑level files by hand.
+  - **npm-run-all@4.1.5**
+    - Helper to orchestrate concurrent/parallel scripts (used in `build:json`).
+    - **Best practices:**
+      - Prefer composing scripts with `npm-run-all` instead of duplicating logic across multiple `npm` commands.
+
+- **HTTP, I/O & Utilities**
+
+  - **node-fetch@^3.3.2**
+    - Fetch implementation for Node used in tests and tooling.
+    - **Best practices:**
+      - Use ESM import syntax consistent with `"type": "module"` (no `require`).
+      - Mock with `nock` in tests to avoid real network calls.
+  - **nock@13.5.4**
+    - HTTP mocking for tests.
+    - **Best practices:**
+      - Keep mocks in test files or shared helpers; avoid mocking in production code.
+      - Reset/clean up mocks between tests to prevent cross‑test interference.
+  - **fs-extra@11.2.0**
+    - Extended filesystem utilities used by tools under `tools/*`.
+    - **Best practices:**
+      - Prefer async APIs and handle errors explicitly in CLI scripts.
+      - Avoid using `fs-extra` directly in browser‑side code; keep it in Node‑only tool paths.
+  - **parse-multipart-data@^1.5.0**
+    - Helper for parsing multipart form data (primarily in tests or server‑side utilities).
+    - **Best practices:**
+      - Keep usage constrained to Node contexts; never bundle into client‑side code unintentionally.
+  - **mutationobserver-shim@0.3.7**, **jsdom@24.0.0**, **jsdom-global@3.0.2**
+    - Test‑environment shims and DOM emulation for Mocha tests.
+    - **Best practices:**
+      - Use these only in test setup (`setup-env.js`); do not import them into production bundles.
+      - If browser APIs are added to the runtime, ensure test shims are updated to match expected behavior.
+
+- **Spies, Coverage & Misc**
+  - **sinon@^17.0.1**
+    - Spies, stubs, and mocks for unit tests.
+    - **Best practices:**
+      - Prefer sandboxed Sinon instances and restore them in `afterEach` to avoid shared state.
+  - **c8@9.0.0**, **nyc@^15.1.0**
+    - Code coverage tooling (`c8` configured in `package.json`).
+    - **Best practices:**
+      - Keep coverage thresholds realistic but strict enough to prevent untested critical paths.
+      - Exclude generated and low‑signal files via the `c8` config rather than ad‑hoc ignores in code.

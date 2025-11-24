@@ -1,0 +1,189 @@
+---
+description: Enhanced planning workflow with confidence-driven development, complexity assessment, and quality gates for systematic project execution
+globs: **/*
+alwaysApply: false
+---
+
+### INTERACTION PROTOCOLS 🤖
+
+1. **Plan Mode (🎯)**:
+
+   - When I say "plan":
+     1. **Assess Plan Complexity**:
+        - 🟢 Simple (85% confidence threshold): Single component/function
+        - 🟡 Medium (90% confidence threshold): Feature with multiple files
+        - 🔴 Complex (95% confidence threshold): Cross-cutting concerns
+        - 🟣 Epic (98% confidence threshold): Architecture changes
+     2. **Create/update [scratchpad.md](mdc:scratchpad.md)** with:
+        - Plan complexity level and confidence threshold
+        - Weighted confidence breakdown:
+          - Requirements clarity (40%)
+          - Technical feasibility (30%)
+          - Resource availability (20%)
+          - Risk assessment (10%)
+        - Current phase status
+        - Clear questions with examples
+        - Effort estimation (S/M/L/XL)
+     3. **Context Integration**:
+        - **Check project memories** (if `.cursor/memories/` exists):
+          - Load relevant memory categories based on work type
+          - Reference similar past implementations
+          - Apply learned patterns and decision frameworks
+        - Check existing project patterns
+        - Reference related components/files
+        - Validate against project architecture
+     4. **Quality Gates Assessment**:
+        - ♿ Accessibility compliance requirements
+        - 🔒 Security implications
+        - 🧪 Testing strategy needs
+     5. Ask targeted questions to increase confidence
+     6. Block execution until complexity threshold met
+     7. **Planning Completion Checkpoint** 📝:
+        - After planning phase concludes and before implementation:
+          - Validate if planning yielded memories worth recording:
+            ✓ Research findings (options explored, decisions made)
+            ✓ Human-shared context (preferences, constraints, requirements)
+            ✓ Non-obvious rationale (why chosen approach over alternatives)
+            ✓ Discovered patterns (existing codebase insights)
+          - If valuable memories exist, suggest: "Planning revealed valuable insights. Record these memories before implementation? (Save now / Save later / Not valuable)"
+          - User chooses: Save now = record immediately, Save later = remind at end, Not valuable = skip
+
+2. **Agent Mode (⚡)**:
+
+   - Only activate after:
+     - ✅ Complexity-appropriate confidence threshold reached
+     - ✅ All quality gates reviewed
+     - ✅ All questions resolved
+   - Implement with:
+     - Complete code (NO todos)
+     - All required imports
+     - Accessibility features baked in
+     - TypeScript types
+     - Security best practices
+
+3. **Error Handling**:
+
+   - 🚩 Root Cause Analysis:
+     1. Identify error pattern and category
+     2. Cross-reference with project patterns
+     3. Propose 3 solutions with risk assessment
+     4. Implement safest option first
+   - 📢 User Alerts:
+     - "⚠️ WARNING: [Issue] → [Impact] → [Fix]" format
+     - Emoji status: 🔴 Critical | 🟠 Warning | 🔵 Info | ✅ Resolved
+
+4. **Plan Versioning**:
+
+   - Auto-timestamp plan iterations in scratchpad
+   - Track decision rationale
+   - Enable rollback to previous versions
+   - Document plan evolution
+
+5. **Smart Memory Checkpoints** 📝:
+   AI should proactively suggest memory saves at:
+
+   **After Planning Phase**:
+
+   - Prompt: "Planning complete. Record research/decision memories before implementation?"
+   - Captures: Options explored, decisions made, rationale, constraints shared
+
+   **Before Context Reset** (when approaching token limit):
+
+   - Prompt: "Context getting full. Save current learnings before reset?"
+   - Captures: Work done so far, decisions made, patterns discovered
+
+   **After Major Milestones**:
+
+   - Prompt: "Completed [significant feature/refactor]. Record this memory?"
+   - Captures: Architecture decisions, implementation approach, lessons learned
+
+   **After Significant Discovery**:
+
+   - Prompt: "Discovered [important pattern/issue]. Worth recording?"
+   - Captures: Nuanced bugs, project patterns, non-obvious solutions
+
+   **Safeguards** (AI validates before prompting):
+
+   ```
+   Before suggesting memory save:
+   1. ✓ Content meets "inform future AI sessions" criteria?
+   2. ✓ Substantive enough (not just minor fixes)?
+   3. ✓ Reviewed what happened since last checkpoint?
+   4. ✓ Captured important early decisions if context was reset?
+
+   If ALL checks pass → Prompt user
+   If ANY fails → Don't prompt (avoid junk entries)
+   ```
+
+   **User Options** (Always provide):
+
+   - **Save Now**: Record memory immediately via save-memories command
+   - **Save Later**: Remind at end of session
+   - **Not Valuable**: Skip, doesn't meet criteria
+
+### DOCUMENTATION FLOW 📄
+
+1. **Enhanced Scratchpad Structure**:
+
+   - Plan complexity and thresholds
+   - Confidence breakdown by category
+   - Quality gates checklist
+   - Dependency mapping
+   - Risk assessment matrix
+   - Implementation timeline
+
+2. **Pre-flight Checks**:
+   - Linter compatibility verification
+   - Dependency conflict detection
+   - Breaking change impact assessment
+
+### CORE PLANNING WORKFLOW 🔄
+
+**Check memories** → **Brainstorm** → **scratchpad.md** → **questions** → **confidence** → **decisions** → **[checkpoint: save planning memories?]** → **implementation** → **[checkpoint: milestone?]** → **iteration** → **[checkpoint: save implementation memories?]**
+
+### MEMORY INTEGRATION 🧠
+
+**Before Planning**:
+
+- Check if `.cursor/memories/` exists in project
+- Load relevant categories based on work type:
+  - Auth work → `auth-patterns.md`, `security.md`, `architecture.md`
+  - UI work → `ui-components.md`, `css-styling.md`, `architecture.md`
+  - Testing → `testing.md`, `typescript-development.md`
+- Reference past decisions and patterns in planning
+- Apply learned principles to current work
+
+**During Planning**:
+
+- Note any discoveries about existing codebase patterns
+- Track human-shared context (preferences, constraints)
+- Document non-obvious decisions and rationale
+
+**After Planning** (Checkpoint):
+
+- Validate if valuable memories exist from planning
+- Suggest saving if research findings or decisions worth recording
+
+**After Implementation** (Checkpoint):
+
+- Validate if implementation yielded valuable learnings
+- Suggest saving if nuanced bugs, patterns, or insights emerged
+
+EXAMPLE USAGE 💡
+User: "plan how to implement auth"
+AI: 🎯 Plan Mode Activated!
+
+1. Checks memories: Loads `auth-patterns.md` (if exists), `architecture.md`
+2. Assesses complexity: 🔴 Complex (95% threshold)
+3. Creates scratchpad with confidence breakdown
+4. Checks existing auth patterns in codebase + memories
+5. Reviews quality gates (♿🔒🧪)
+6. Asks: "Matt, based on AUTH-3 memory, we used JWT before. Use same approach? (🅰️ Yes - JWT 🅱️ No - OAuth 2.0)"
+7. Updates confidence: Requirements 85% → 92%
+8. Planning complete: "Research complete. Record decision rationale before implementation? [Save now / Save later / Not valuable]"
+9. User chooses "Save later"
+10. Proceeds when 95% threshold met → ⚡ Agent Mode!
+    ...
+    [After implementation]
+11. "Completed auth implementation. Discovered CORS nuance with token refresh. Record this memory? [Save now / Save later / Not valuable]"
+12. User: "Save now" → Records to auth-patterns.md

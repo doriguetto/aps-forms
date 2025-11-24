@@ -1,0 +1,91 @@
+---
+description: Overview of the APS Forms project directory structure and key source files to guide navigation and rule scoping.
+globs: blocks/**/*, scripts/**/*, styles/**/*, test/**/*, rollup/**/*, tools/**/*, models/**/*, *.html, *.json, *.md, package*.json
+alwaysApply: false
+---
+
+- **Top-Level Structure**
+  - `404.html`, `head.html`, `favicon.ico`: Core static HTML assets and error page.
+  - `package.json`, `package-lock.json`: Node package definitions and dependency lockfile.
+  - `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `LICENSE`: Project documentation and governance.
+  - `helix-query.yaml`, `helix-sitemap.yaml`, `paths.json`: Helix/Edge configuration and routing metadata.
+  - `component-definition.json`, `component-filters.json`, `component-models.json`: Global component registry and modeling configuration (see [model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc) for how Universal Editor models and fields are structured).
+  - `models/`: Shared model JSON files used by the site shell (not the adaptive form runtime).
+
+- **Blocks (Site-level Blocks)**
+  - `blocks/`: Helix-style content blocks used to compose pages.
+    - `blocks/header/`: Page header layout, navigation, and branding.
+    - `blocks/footer/`: Page footer layout and auxiliary links.
+    - `blocks/hero/`: Hero/banner component (`_hero.json`, `hero.css`, `hero.js`).
+    - `blocks/cards/`: Card layout and styling (`_cards.json`, `cards.css`, `cards.js`).
+    - `blocks/columns/`: Column layout block (`_columns.json`, `columns.css`, `columns.js`).
+    - `blocks/fragment/`: Fragment block for reusable content sections.
+    - `blocks/embed-adaptive-form/`: Wrapper for embedding the adaptive form runtime.
+    - `blocks/form/`: Core adaptive forms runtime and authoring surface.
+
+- **Adaptive Form Block Structure (`blocks/form/`)**
+  - `form.js`, `form.css`: Main initialization and styling for embedded adaptive forms.
+  - `constant.js`, `functions.js`, `mappings.js`, `util.js`, `transform.js`: Form runtime utilities, constants, and data transformation logic.
+  - `integrations/recaptcha.js`: reCAPTCHA integration for form submissions.
+  - `models/`:
+    - `form-common/`: Shared JSON models used across form components.
+    - `form-components/`: Component-specific JSON models.
+  - `rules/`:
+    - `index.js`: Entry point for the rule engine wiring.
+    - `functions.js`, `functionRegistration.js`: Rule functions and registration.
+    - `model/`: Rule engine model helpers and evaluators.
+    - `formula/`: JSON formula-related rule helpers.
+    - `RuleEngineWorker.js`: Web worker entry for rule evaluation off main thread.
+  - `rules-doc/`: Rule language documentation, parser, and compiler (`RuleCompiler.js`, `RuleEngine.js`, `parser/*`).
+  - `submit.js`: Form submission orchestration and integration points.
+  - `components/`: Form UI components.
+    - `accordion/`, `modal/`, `password/`, `range/`, `rating/`, `tnc/`, `wizard/`, `file/`, `repeat/`, `toggleable-link/`: Each folder contains component JSON model(s), CSS, and JS behavior where applicable.
+
+- **Scripts and Tooling**
+  - `scripts/`:
+    - `scripts.js`, `delayed.js`: Global site scripts and lazy-loading hooks.
+    - `aem.js`: AEM / Helix integration helpers.
+    - `editor-support.js`, `editor-support-rte.js`: Authoring and RTE support in editors.
+    - `form-editor-support.js`, `form-editor-support.css`: Authoring utilities specific to forms.
+  - `tools/`:
+    - `forms-scaffolder.js`: CLI tooling for scaffolding forms.
+    - `update-mappings.js`: Utility script to synchronize form mappings.
+    - `sidekick/config.json`: Helix Sidekick configuration.
+    - `utils.js`: Shared helper functions for tooling.
+  - `rollup/`:
+    - `af-core.rollup.config.js`, `af-formatters.rollup.config.js`, `jsonformula.rollup.config.js`: Rollup build configurations for the core runtime and formatters.
+    - `common.js`: Shared Rollup configuration utilities.
+
+- **Styling and Assets**
+  - `styles/`:
+    - `styles.css`: Global site styles.
+    - `lazy-styles.css`: Lazily loaded styles for non-critical UI.
+    - `fonts.css`: Font-face declarations.
+  - `fonts/`: Webfont files (Roboto variants).
+  - `icons/`: SVG icons (`aem.svg`, `close.svg`, `search.svg`).
+
+- **Testing**
+  - `test/`:
+    - `e2e/`: Playwright E2E tests and helpers.
+      - `doc-based/`: Document-based validation flows.
+      - `x-walk/`: Cross-walk runtime tests per component (e.g., `accordion`, `button`, `rating`, `wizard`).
+      - `upload/`: Test fixtures for file upload components.
+      - `main/page/`, `main/utils/`: Page object and utility helpers.
+      - `fixtures.js`, `global-setup.js`, `utils.js`: Shared test setup and helpers.
+    - `unit/`:
+      - `forms/`: High-level form runtime tests (e.g., `advanceEnquiry.js`, `universaleditorform.js`).
+      - `fixtures/`: HTML/JS fixtures grouped by feature (components, doc-based submit, dynamic, form, prefill, reset, submit, UE, etc.).
+      - `form.authoring.test.js`, `render.test.js`, `recaptcha.test.js`, `forms-scaffolder.test.js`, `customFunction.test.js`, `setup-env.js`, `testUtils.js`: Unit and integration tests for core runtime and tooling.
+    - `merge-coverage.js`: Coverage aggregation script.
+    - `README.md`: Testing documentation.
+
+- **Usage Notes**
+  - **Form Runtime Workflows**:
+    - Core runtime changes typically touch `blocks/form/*`, especially `form.js`, `functions.js`, `mappings.js`, `rules/*`, and `submit.js`.
+  - **Block-level UI Changes**:
+    - Site shell UI is driven by `blocks/*` (header, footer, hero, cards, columns, fragment, embed-adaptive-form).
+  - **Testing Changes**:
+    - Component and workflow regressions should be accompanied by updates in `test/e2e/x-walk/*` and/or `test/unit/fixtures/*` plus the relevant spec files.
+  - **Build/Tooling Changes**:
+    - Build or bundling modifications should be made under `rollup/*` and validated through existing tests and any related CLI scripts in `tools/*`.
+

@@ -1,0 +1,386 @@
+---
+description: Generic memory management rules for AI-driven development across any project
+globs: **/*
+alwaysApply: false
+---
+
+# Memory Management System 🧠
+
+This rule defines how AI should manage and utilize project memories - a knowledge base that captures implementation details, lessons learned, and decision frameworks to inform future development sessions.
+
+## Core Philosophy
+
+**Memory Purpose**: Capture knowledge that will inform future AI-driven development sessions, focusing on:
+
+- Project-specific patterns and conventions
+- Nuanced situations that led to bugs or breakthroughs
+- Non-obvious decision rationale and trade-offs
+- Human-shared context and preferences
+- Architectural discoveries and constraints
+
+**Not a Developer Tool**: These memories are optimized for AI context loading, not human readability. Complexity and depth are acceptable if they provide value to future AI sessions.
+
+## Memory System Structure
+
+### Project-Specific Location
+
+Each project maintains its own memories in `.cursor/memories/`:
+
+```
+project-root/
+  .cursor/
+    └── memories/
+        ├── README.md                    # Category index + loading strategy
+        ├── architecture.md              # Core category (always present)
+        ├── development-principles.md    # Core category (always present)
+        ├── testing.md                   # Core category (always present)
+        └── [other-categories].md        # Created organically as needed
+```
+
+### Category System
+
+**Core Categories** (Present in all projects):
+
+- `architecture.md` - Component design, system architecture, structural patterns
+- `development-principles.md` - Strategic decisions, refactoring approaches, meta-patterns
+- `testing.md` - Testing strategies, coverage approaches, quality assurance patterns
+
+**Additional Categories** (Created organically):
+
+- Created when recording memories that don't fit existing categories
+- Named descriptively based on content (e.g., `typescript-development.md`, `auth-patterns.md`)
+- Always use hyphenated lowercase (e.g., `css-styling.md`, `api-integration.md`)
+
+### Loading Strategy
+
+**Context-Aware Loading**: AI should load only relevant memory categories based on current work:
+
+- Check project's `.cursor/memories/README.md` for category-to-work-type mappings
+- Load 1-3 relevant category files (not all memories)
+- Expected benefit: 70-85% context reduction vs loading all memories
+
+**Example Loading Strategy**:
+
+```
+Current Task: Implementing authentication feature
+→ Load: architecture.md, auth-patterns.md (if exists), development-principles.md
+→ Skip: css-styling.md, testing.md, ui-bugs.md (not relevant)
+```
+
+## Memory Recording Criteria
+
+### When to Record
+
+**Primary Question**: "Will this inform future AI-driven development sessions?"
+
+**✅ YES - Record These**:
+
+- **Nuanced situations**: Timing issues, race conditions, DOM measurement quirks
+- **Project patterns**: Architecture decisions, team conventions, code organization
+- **Human context**: Developer preferences shared, team standards, external constraints
+- **Non-obvious rationale**: Why approach A was chosen over B when both seemed viable
+- **Research findings**: Options explored during planning, trade-offs identified
+- **Discoveries**: Patterns found in codebase, architectural insights, constraint realizations
+
+**❌ NO - Skip These**:
+
+- Straightforward implementations AI already knows
+- Common patterns (adding types, basic React components, simple CRUD)
+- Obvious bug fixes (typos, simple logic errors)
+- Work following well-established project patterns without variation
+
+### Recording Granularity
+
+**Not time-based** - A 5-minute discovery can be more valuable than an hour of routine work.
+
+**Impact-based** - Record if:
+
+- Future similar work would benefit from this knowledge
+- Project-specific nuance was involved
+- Non-obvious approach or constraint was discovered
+- Human context was shared that affects implementation choices
+
+## Memory Entry Format
+
+### Two Entry Types
+
+**1. Implementation Memory** (Specific fixes/features):
+
+```markdown
+## [PREFIX-##]: [Descriptive Title]
+
+**Issue/Context:** [Clear problem statement]
+
+**Root Cause:** [Why this happened - critical for prevention]
+
+**Solution:** [What was implemented]
+
+- [Key technical decision 1]
+- [Key technical decision 2]
+
+**Files:** [Use file reference strategy - see below]
+
+**Technical Impact:**
+
+- [What this achieved]
+- [How it improves the codebase]
+
+**Cross-References:**
+
+- Related: [OTHER-##: Title](other-category.md#anchor)
+
+**Learning:** [Key takeaway for future similar work]
+
+---
+```
+
+**2. Principle/Lesson Memory** (Broader insights):
+
+```markdown
+## [PREFIX-##]: [Principle/Pattern Title]
+
+**Context:** [When/where this principle applies]
+
+**Key Principles:**
+
+- [Core principle 1 with rationale]
+- [Core principle 2 with rationale]
+
+**Decision Framework:**
+
+- **When to apply:** [Specific conditions]
+- **When to avoid:** [Situations where this doesn't work]
+- **Trade-offs:** [What you gain vs sacrifice]
+
+**Implementation Notes:**
+
+- [Key considerations]
+- [Common pitfalls]
+- [Success patterns]
+
+**Real-World Application:**
+
+- [Example of successful application]
+- [Measurable outcomes]
+
+**Cross-References:**
+
+- Foundation: [PREFIX-##: Title](category.md#anchor)
+
+---
+```
+
+### File Reference Strategy
+
+Optimize based on file count:
+
+- **≤3 files**: List specific paths: `src/components/Button.tsx, tests/Button.test.ts`
+- **4-8 files**: Group by type: `3 components, 2 services, 1 test file`
+- **9+ files**: Scope description: `All authentication modules, main API integration layer`
+
+### Entry Numbering
+
+- **Sequential per category**: UI-1, UI-2, ARCH-1, ARCH-2, TS-1, TS-2
+- **Prefix format**: 2-4 uppercase letters matching category
+  - `architecture.md` → ARCH prefix
+  - `typescript-development.md` → TS prefix
+  - `auth-patterns.md` → AUTH prefix
+- **Check category file** for next available number before creating entry
+
+## Category File Structure
+
+Each category file follows this structure:
+
+```markdown
+# [Category Name] Memories
+
+[Brief description of what this category contains]
+
+## Core Principles
+
+### **[Emoji] [Principle Name]**
+
+**Decision Framework:**
+
+1. [Key principle 1]
+2. [Key principle 2]
+
+**Success Criteria:**
+
+- [Metric 1]
+- [Metric 2]
+
+---
+
+## Quick Reference
+
+- [PREFIX-1]: [Title] ([key topics])
+- [PREFIX-2]: [Title] ([key topics])
+
+---
+
+## [PREFIX-1]: [Detailed Memory Entry]
+
+[Full entry content as per format above]
+
+---
+```
+
+## Cross-Referencing Strategy
+
+**Purpose**: Connect related knowledge across categories for comprehensive understanding.
+
+**When to Cross-Reference**:
+
+- Primary entry in most relevant category (full details)
+- Secondary mentions in related categories (brief + link to primary)
+- Connect similar patterns across different domains
+
+**Format**: `[CATEGORY-##: Title](category-file.md#anchor)`
+
+**Example**:
+
+```markdown
+## ARCH-15: Service-Oriented Architecture Pattern
+
+**Cross-References:**
+
+- Related: [DEV-3: Component Extraction Framework](development-principles.md#dev-3)
+- See also: [TS-2: Dependency Injection Types](typescript-development.md#ts-2)
+```
+
+## Memory Lifecycle
+
+### Creation
+
+- Via `save-memories` command after significant work
+- At smart checkpoints during long sessions (planning completion, before context reset, after milestones)
+- Always with user approval before recording
+
+### Growth
+
+- Categories grow organically as project needs emerge
+- New categories created when memory doesn't fit existing ones
+- README.md updated with each new category
+
+### Maintenance
+
+- Use `audit-memories` command for periodic review
+- Identify deprecated entries (superseded by newer knowledge)
+- Consolidate duplicate insights across categories
+- Archive or remove obsolete information
+
+### Updates
+
+- **Generally don't update entries** - create new ones with cross-references
+- Exception: Fixing errors or adding critical missing context
+- Deprecation handled via audit command, not inline edits
+
+## Quality Standards
+
+**Concise but Complete**: Essential information without verbose implementation details
+
+**Future-Focused**: Information useful for similar future problems, not historical documentation
+
+**Decision-Oriented**: Why choices were made, not just what was done
+
+**Searchable**: Descriptive titles enabling easy grep/search (e.g., "JWT vs OAuth Decision" not "Auth Work")
+
+**Cross-Referenced**: Connected to related work in other categories for complete context
+
+**Principle-Heavy**: 80% transferable insights, 20% implementation context
+
+## Integration with Development Workflow
+
+### Planning Phase
+
+- **Before Planning**: Check relevant memories for similar past work
+- **During Planning**: Reference decision frameworks from memories
+- **After Planning**: Consider recording if research yielded valuable insights
+
+### Implementation Phase
+
+- **Before Implementation**: Review relevant patterns and pitfalls
+- **During Implementation**: Apply learned principles and conventions
+- **After Implementation**: Record memories of nuanced work and discoveries
+
+### Context Reset Handling
+
+- **Before Reset**: AI may prompt to save current learnings
+- **After Reset**: Reference memories to regain context quickly
+- **Progressive Saves**: Checkpoint significant decisions before they're lost
+
+### Smart Checkpoints
+
+AI should proactively prompt for memory saves at:
+
+1. **After planning phase completes** - Research, decisions, constraints identified
+2. **Before context reset** (when approaching token limit) - Current learnings at risk
+3. **After major milestones** - Significant features, refactors, or discoveries
+4. **After significant discoveries** - Nuanced bugs, patterns, non-obvious solutions
+
+**Safeguards Before Prompting**:
+
+```
+AI validates:
+1. ✓ Content meets "inform future AI sessions" criteria?
+2. ✓ Substantive enough (not minor fixes)?
+3. ✓ Reviewed what happened since last checkpoint?
+4. ✓ Captured important early decisions if context was reset?
+
+If ALL checks pass → Prompt user
+If ANY fails → Don't prompt (avoid junk entries)
+```
+
+**User Options** (Always provide):
+
+- **Save Now**: Record memory immediately
+- **Save Later**: Remind at end of session
+- **Not Valuable**: Skip, doesn't meet criteria
+
+## Bootstrap Behavior
+
+When recording first memory in a project without existing memory system:
+
+**AI Should**:
+
+1. Detect absence of `.cursor/memories/` directory
+2. Inform user: "No memory system detected. I'll initialize the framework first."
+3. Run initialization (same as explicit `init-memories` command)
+4. Confirm: "Memory system initialized!"
+5. Proceed with saving the memory
+
+**Result**: Consistent structure across all projects (README + 3 core categories + memory being saved)
+
+## Commands Reference
+
+- **`save-memories`**: Record new memory (includes smart bootstrap detection)
+- **`init-memories`**: Explicitly initialize memory system (proactive setup)
+- **`audit-memories`**: Review all memories for deprecation/consolidation
+
+## Example Usage
+
+**Scenario**: Implementing TypeScript authentication with JWT
+
+1. **Check Memories**: Load `architecture.md`, check if `auth-patterns.md` exists
+2. **Implement Feature**: Apply learned patterns from memories
+3. **Discovery**: Find nuanced CORS issue with token refresh
+4. **Save Memory**:
+   - If `auth-patterns.md` exists → Save there
+   - If not → AI suggests: "Create `auth-patterns.md` for authentication memories?"
+   - Entry captures: CORS issue, root cause, solution, learning
+5. **Update README**: Add auth-patterns to category index and loading strategy
+
+## Success Indicators
+
+- ✅ Memories inform future similar work effectively
+- ✅ AI quickly finds relevant context without loading all memories
+- ✅ Decision frameworks guide new implementations
+- ✅ Team conventions and preferences are captured
+- ✅ Nuanced issues don't repeat due to documented patterns
+- ✅ Cross-references create comprehensive knowledge web
+- ✅ Categories grow naturally with project needs
+
+---
+
+**Remember**: Memory system exists to make AI more effective at understanding project context, conventions, and patterns. Quality and relevance matter more than quantity.

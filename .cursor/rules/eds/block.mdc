@@ -1,0 +1,282 @@
+---
+description: Conventions for defining Helix block containers using core/franklin/components/block/v1/block (Cards example).
+globs: blocks/cards/_cards.json, blocks/cards/cards.js, blocks/cards/cards.css
+alwaysApply: false
+---
+
+- **Block container definition (`core/franklin/components/block/v1/block`)**
+
+  - Define each container block in a `definitions[]` entry with:
+    - `title`: Human‑readable, typically **plural** for collections (e.g., `"Cards"`).
+    - `id`: Lowercase, matches the **block folder and file base name** (e.g., `"cards"` ↔ `blocks/cards/`, `_cards.json`, `cards.js`, `cards.css`).
+    - `plugins.xwalk.page.resourceType`: Always `"core/franklin/components/block/v1/block"` for container definitions.
+  - Example from `blocks/cards/_cards.json`:
+
+  ```json
+  {
+    "title": "Cards",
+    "id": "cards",
+    "plugins": {
+      "xwalk": {
+        "page": {
+          "resourceType": "core/franklin/components/block/v1/block",
+          "template": {
+            "name": "Cards",
+            "filter": "cards"
+          }
+        }
+      }
+    }
+  }
+  ```
+
+- **Template and filter wiring for containers**
+
+  - For container blocks, `plugins.xwalk.page.template`:
+    - `name`: Matches the `title` (e.g., `"Cards"`).
+    - `filter`: References a `filters[]` entry by `id` (e.g., `"cards"`).
+  - Each container block must have a corresponding `filters[]` entry:
+    - `id`: Matches the block/container `id` and template `filter` (e.g., `"cards"`).
+    - `components`: Lists **item definition ids** (`core/franklin/components/block/v1/block/item`) allowed inside the container.
+  - Example filter for the Cards container:
+
+  ```json
+  {
+    "id": "cards",
+    "components": ["card"]
+  }
+  ```
+
+- **Naming alignment with file structure and CSS**
+
+  - **Folder and file naming:**
+    - Block folder: `blocks/cards/` ↔ container `id: "cards"`.
+    - JSON model: `_cards.json` (leading `_` for model sources, base name matches `id`).
+    - Behavior and styles: `cards.js`, `cards.css` (base name matches `id` and CSS block class).
+  - **CSS class conventions (Cards example, `cards.css`):**
+
+    - Root block class is the block `id`: `.cards { ... }` (used as `.cards > ul`, `.cards > ul > li`, etc.).
+    - Content structure classes follow `<block-id>-card-*` naming:
+      - `.cards .cards-card-body` for textual content.
+      - `.cards .cards-card-image` for media/picture regions.
+    - Images inside cards use full‑width responsive styling:
+
+    ```css
+    .cards > ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+      grid-gap: 24px;
+    }
+
+    .cards > ul > li img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+    ```
+
+- **DOM structure and behavior (`cards.js` decorate pattern)**
+
+  - Container blocks expose a **default export** `decorate(block)` that:
+    - Accepts the Helix block root element.
+    - Normalizes child rows into semantic markup (Cards example: converts rows into a `<ul>` of `<li>` cards).
+  - Cards container pattern:
+    - Create a `<ul>` and, for each original row:
+      - Create an `<li>` and move instrumentation from the original row to the `<li>` using `moveInstrumentation`.
+      - Move the row’s children into the `<li>`, tagging:
+        - The single `picture` wrapper as `.cards-card-image`.
+        - Remaining content containers as `.cards-card-body`.
+    - Replace inline `<picture>` images with optimized responsive images using `createOptimizedPicture`.
+  - Key utility conventions (from `cards.js`):
+
+  ```javascript
+  import { createOptimizedPicture } from "../../scripts/aem.js";
+  import { moveInstrumentation } from "../../scripts/scripts.js";
+
+  export default function decorate(block) {
+    const ul = document.createElement("ul");
+    [...block.children].forEach((row) => {
+      const li = document.createElement("li");
+      moveInstrumentation(row, li);
+      // ...
+    });
+
+    ul.querySelectorAll("picture > img").forEach((img) => {
+      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [
+        { width: "750" },
+      ]);
+      moveInstrumentation(img, optimizedPic.querySelector("img"));
+      img.closest("picture").replaceWith(optimizedPic);
+    });
+
+    block.textContent = "";
+    block.append(ul);
+  }
+  ```
+
+  - **DO:**
+    - Preserve AEM instrumentation whenever you move or replace DOM nodes by calling `moveInstrumentation(sourceNode, targetNode)`.
+    - Use `createOptimizedPicture` for block images to ensure responsive, optimized loading.
+    - Keep DOM and CSS class naming aligned with the block `id` to make blocks discoverable and consistent.
+  - **DON'T:**
+    - Change the `resourceType` string for container definitions; use `core/franklin/components/block/v1/block` to stay compatible with XWalk.
+    - Diverge block `id`, folder name, CSS root class, and JSON `_*.json` base name—this breaks discoverability and tooling expectations.
+
+- **Block JSON structure and key ordering**
+
+  - For any block JSON file (for example, `blocks/hero/_hero.json`, `blocks/cards/_cards.json`, or a future `blocks/teaser/_teaser.json`), keep the top-level keys in this **exact order**:
+    - `"definitions"`, then `"models"`, then `"filters"`.
+  - Use empty arrays instead of omitting sections:
+    - Non-container blocks still declare `"filters": []` even when they do not accept nested blocks.
+  - This ordering and structure match the expectations from Adobe’s Universal Editor guidance for new blocks, and keeps the JSON compatible with tooling and build steps documented in the Adobe article on [block JSON](https://experienceleague.adobe.com/en/docs/experience-manager-learn/sites/edge-delivery-services/developing/universal-editor/5-new-block#block-json).
+
+- **Modeling simple, non-container blocks (Teaser-style pattern)**
+
+  - Simple, non-container blocks (for example, a `teaser` block) still use `core/franklin/components/block/v1/block` as `resourceType`, but:
+    - Have a single `models[]` entry whose `id` matches the block `id` (e.g., `"teaser"` in `blocks/teaser/_teaser.json`).
+    - Leave `"filters": []` in the block JSON, and rely on **container models** (such as `models/_section.json`) to specify where the block can be used.
+  - Design the `models[].fields` array to reflect logical content groupings and to produce semantic HTML (see [model-definition.mdc](mdc:.cursor/rules/eds/model-definition.mdc) for full field and component-type options):
+    - **Image + alt text (field collapse to `<picture><img>`):**
+      - `image`: `component: "reference"`, `valueType: "string"`, `multi: false`.
+      - `imageAlt`: `component: "text"`, `valueType: "string"`, `required: true`.
+      - These two fields are collapsed by the Universal Editor into a single `<img>` element, with `src` from `image` and `alt` from `imageAlt`.
+    - **Text content grouping (`textContent_*` prefix):**
+      - Group text-centric fields by prefixing their `name` with a logical group name (e.g., `textContent_text`).
+      - Fields that share the same prefix are rendered inside the same `<div>` in the Edge Delivery Services HTML, which simplifies styling and keeps related content together.
+    - **CTA collapse to `<a>` element:**
+      - `textContent_cta`: `component: "aem-content"`, `valueType: "string"` for the link target.
+      - `textContent_ctaText`: `component: "text"`, `valueType: "string"` for the link label.
+      - These fields collapse into a single `<a href="...">Label</a>` element instead of disjoint `div`s.
+  - Example (trimmed `models` section for a `teaser` block model):
+
+  ```json
+  {
+    "models": [
+      {
+        "id": "teaser",
+        "fields": [
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "image",
+            "label": "Image",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "imageAlt",
+            "label": "Image alt text",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "textContent_text",
+            "label": "Text",
+            "valueType": "string",
+            "required": true
+          },
+          {
+            "component": "aem-content",
+            "name": "textContent_cta",
+            "label": "CTA",
+            "valueType": "string"
+          },
+          {
+            "component": "text",
+            "name": "textContent_ctaText",
+            "label": "CTA label",
+            "valueType": "string"
+          }
+        ]
+      }
+    ],
+    "filters": []
+  }
+  ```
+
+- **Block definition with defaults for simple blocks**
+
+  - Non-container blocks still define a `definitions[]` entry, linking to the model via `template.model` and optionally seeding sensible default content:
+    - `resourceType`: `"core/franklin/components/block/v1/block"`.
+    - `template.name`: Human-readable block name, typically matching the folder (`"Teaser"` ↔ `blocks/teaser/`).
+    - `template.model`: The `id` of the content model (e.g., `"teaser"`).
+    - `template.<fieldName>`: Optional initial values for fields such as `textContent_text`, `textContent_cta`, `textContent_ctaText`.
+  - Example `definitions` section for a simple `teaser` block:
+
+  ```json
+  {
+    "definitions": [
+      {
+        "title": "Teaser",
+        "id": "teaser",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block",
+              "template": {
+                "name": "Teaser",
+                "model": "teaser",
+                "textContent_text": "<h2>Enter a title</h2><p>...and body text here!</p>",
+                "textContent_cta": "/",
+                "textContent_ctaText": "Click me!"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "models": [
+      {
+        "id": "teaser",
+        "fields": [
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "image",
+            "label": "Image",
+            "multi": false
+          }
+          // ...remaining fields as in the previous example...
+        ]
+      }
+    ],
+    "filters": []
+  }
+  ```
+
+- **Filters for section container and new block IDs**
+
+  - Container blocks, such as `section`, declare which block `id`s they can host via their own `filters[]` configuration under `models/`:
+    - In this project, `models/_section.json` controls which blocks can be added to a section.
+    - To enable a new non-container block (for example, `teaser`) for use inside sections, add its `id` to the `filters[].components` array.
+  - Example from the existing `models/_section.json`:
+
+  ```json
+  {
+    "filters": [
+      {
+        "id": "section",
+        "components": [
+          "text",
+          "image",
+          "button",
+          "title",
+          "hero",
+          "cards",
+          "columns",
+          "fragment",
+          "form",
+          "embed-adaptive-form"
+          // "teaser" would be added here when introduced
+        ]
+      }
+    ]
+  }
+  ```
+
+- **Linting and building block JSON**
+  - After editing block JSON files (for example, `blocks/*/_*.json`, `models/_section.json`):
+    - Run `npm run lint:js` to lint JavaScript **and JSON** files and catch structural or syntax issues early (mirroring the guidance from Adobe’s block JSON documentation).
+    - Run `npm run build:json` to regenerate `component-models.json`, `component-definition.json`, and `component-filters.json` from the `_*.json` sources (see [eds-forms/tech-stack.mdc](mdc:.cursor/rules/eds-forms/tech-stack.mdc) for details).
+  - Keep `_`-prefixed JSON files (such as `_hero.json`, `_cards.json`, `_section.json`) as the **source of truth**, and avoid editing the generated top-level component JSON files by hand.

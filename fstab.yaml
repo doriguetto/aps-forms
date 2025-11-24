@@ -1,0 +1,5 @@
+mountpoints:
+  /:
+    url: "https://author-p138942-e1404647.adobeaemcloud.com/bin/franklin.delivery/@ags2480/aps-demo/main"
+    type: "markup"
+    suffix: ".html"

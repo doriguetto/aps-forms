@@ -1,0 +1,97 @@
+---
+description: Guidelines for defining Universal Editor model definitions, fields, and component types for Edge Delivery Services blocks.
+globs: blocks/**/*, models/_*.json, component-definition.json, component-models.json
+alwaysApply: false
+---
+
+- **Model definition basics**
+  - Universal Editor models describe the editable properties for a component and how they appear in the properties panel.
+  - A model file is a JSON array of model objects, each with:
+    - `id`: Unique identifier for the model (for example, a block or item id such as `"card"` or `"teaser"`).
+    - `fields`: Array of field configurations that drive the Universal Editor UI.
+ 
+- **Field configuration shape**
+  - Each entry in `fields[]` follows the general shape from Adobe’s Universal Editor model definition:
+    - `component` (**required**): Component type used to render the field in the properties panel (for example, `"text"`, `"richtext"`, `"number"`, `"boolean"`, `"reference"`, `"aem-content"`, `"aem-tag"`, `"select"`, `"radio-group"`, `"checkbox-group"`, `"multiselect"`, `"tab"`, `"container"`).
+    - `name` (**required**): Property name or nested path where the value is persisted (for example, `"textContent_text"` or `"teaser/image/fileReference"`).
+    - `label` (**required**): Field label shown to authors.
+    - `description` (optional): Help text for authors.
+    - `value` (optional): Default/placeholder value used for initial authored content only; it does not drive content updates after editing.
+    - `valueType` (optional but recommended): Data type for validation (`"string"`, `"string[]"`, `"number"`, `"date"`, `"boolean"`).
+    - `required`, `readOnly`, `hidden` (optional): Boolean flags controlling authoring behavior.
+    - `condition` (optional): Rule expression to show/hide the field dynamically.
+    - `multi` (optional): Marks a field as a multi-field; container nesting is not permitted in multi-fields.
+    - `validation` (optional): Component-type-specific validation (for example, min/max for numbers, regex for text).
+    - `raw` (optional): Raw data blob that the runtime component can interpret.
+  - **DO:**
+    - Keep `name` values stable; changing them breaks existing authored content.
+    - Use `valueType` consistently with how the runtime reads the data.
+    - Provide `label` and `description` that match business language, not just implementation details.
+  - **DON'T:**
+    - Overload one field with multiple unrelated responsibilities; create additional fields instead.
+    - Depend on `value` for live content; treat it strictly as an initial default.
+
+- **Common component types and their validation**
+  - **Text (`"text"`)**
+    - Single-line text input.
+    - Typical validation options:
+      - `minLength`, `maxLength`: Character length constraints.
+      - `regExp`: Regular expression the value must match.
+      - `customErrorMsg`: Author-facing error message when validation fails.
+  - **Rich Text (`"richtext"`)**
+    - Multi-line rich text; stores HTML or markup in a string field.
+    - Use when authors need formatting; keep `valueType: "string"`.
+  - **Number (`"number"`)**
+    - Numeric input, with optional validation:
+      - `numberMin`, `numberMax`: Inclusive numeric bounds.
+      - `customErrorMsg`: Error text when bounds are violated.
+  - **Boolean (`"boolean"`)**
+    - Toggle storing `true`/`false`.
+    - Optional `validation.customErrorMsg` for non-boolean values.
+  - **Checkbox Group (`"checkbox-group"`)**
+    - Multi-select booleans rendered as checkboxes.
+    - Usually uses `valueType: "string[]"` and an `options[]` array of `{ "name", "value" }`.
+  - **Radio Group (`"radio-group"`)**
+    - Single-select choice rendered as radio buttons.
+    - Typically `valueType: "string"` with an `options[]` array.
+  - **Select / Multiselect (`"select"`, `"multiselect"`)**
+    - Drop-down list(s) of options; `multiselect` may use grouping via `children[]`.
+    - For grouped options, use parent items with a `name` and nested `children` entries for actual options.
+  - **Reference (`"reference"`)**
+    - Asset picker for AEM assets (for example, images).
+    - Use `valueType: "string"` with the resolved asset reference.
+  - **AEM Content (`"aem-content"`)**
+    - Picker for any AEM content (not limited to assets).
+    - Supports `validation.rootPath` to constrain selection to a subtree.
+  - **AEM Tag (`"aem-tag"`)**
+    - Tag picker bound to `cq:tags` or similar tag properties.
+    - Use `valueType: "string"` or `"string[]"` depending on project conventions.
+  - **Container (`"container"`)**
+    - Groups related fields together, optionally collapsible via `collapsible: true`.
+    - Can host its own `fields[]` for nested configuration; do not nest containers inside multi-fields.
+  - **Tab (`"tab"`)**
+    - Logical separator in the `fields[]` array:
+      - Items before the first `tab` appear above tabs.
+      - Items after a `tab` belong to that tab until the next `tab` component.
+
+- **Field naming and grouping patterns (project conventions)**
+  - **Group prefixes for layout-aware grouping**:
+    - Use prefixes such as `textContent_` in `name` to logically group fields that should render together (for example, `textContent_text`, `textContent_cta`, `textContent_ctaText`).
+    - In this project, grouped names are often collapsed by the Universal Editor into a single DOM structure (for example, a `<div>` grouping multiple text fields or an `<a>` built from URL + label fields). See block-specific guidance in [block.mdc](mdc:.cursor/rules/eds/block.mdc).
+  - **Image and asset fields**:
+    - Use `component: "reference"` with `valueType: "string"` and a simple `name` such as `"image"` or `"fileReference"`.
+    - Provide a separate text field for alt text (for example, `imageAlt`) with `component: "text"` and `required: true` when accessibility needs alt text.
+  - **Container vs. item models**:
+    - Container blocks (for example, `cards`) describe which item models they accept through filters (see [block.mdc](mdc:.cursor/rules/eds/block.mdc)).
+    - Item models (for example, `"card"`) define the actual `fields[]` for each item instance (see [block-item.mdc](mdc:.cursor/rules/eds/block-item.mdc)).
+
+- **Best practices for maintaining model definitions**
+  - **Model sources of truth**:
+    - Treat `_`-prefixed JSON model files (for example, `blocks/*/_*.json`, `models/_section.json`) as authoritative and avoid editing generated aggregates directly.
+    - Use `npm run build:json` to regenerate `component-models.json`, `component-definition.json`, and `component-filters.json` after changing models (see [eds-forms/tech-stack.mdc](mdc:.cursor/rules/eds-forms/tech-stack.mdc)).
+  - **Validation and linting**:
+    - Run `npm run lint` after editing model JSON to catch structural issues early; JSON linting is configured via `eslint-plugin-json`.
+  - **Compatibility with Adobe guidance**:
+    - Align new models with Adobe’s documented field shapes and component types to keep the Universal Editor behavior predictable ([AEM field-types](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/field-types?lang=en#aem-tag)).
+    - When introducing new patterns not covered here, consider updating this rule with concrete examples from the codebase.
+

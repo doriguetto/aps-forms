@@ -1,0 +1,11 @@
+---
+description: Add a blank line at the end of every file so GitHub is happy
+globs: **/*
+alwaysApply: true
+---
+
+### STRICT RULES 🔥
+
+## GitHub Considerations
+
+- Add a blank line at the end of every file so GitHub is happy
