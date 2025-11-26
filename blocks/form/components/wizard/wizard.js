@@ -230,9 +230,6 @@ export class WizardLayout {
         });
       }
 
-      // Insert button wrapper at the top (before any existing content)
-      panel.insertBefore(wrapper, panel.firstChild);
-
       // create wizard menu
       const wizardMenu = WizardLayout.createMenu(Array.from(children));
       const menuItems = wizardMenu.querySelectorAll("li");
@@ -245,8 +242,11 @@ export class WizardLayout {
         }
       });
 
-      // Insert the menu after the button wrapper
+      // Insert the menu at the top (before the first panel-wrapper)
       panel.insertBefore(wizardMenu, children[0]);
+
+      // Append button wrapper at the bottom (after all panel-wrappers)
+      panel.append(wrapper);
       WizardLayout.attachMutationObserver(panel);
     }
 
