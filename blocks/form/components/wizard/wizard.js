@@ -66,16 +66,35 @@ export class WizardLayout {
     const navigateTo = valid ? this.getEligibleSibling(current, forward) : current;
 
     if (navigateTo && current !== navigateTo) {
+      const currentIndex = +current.dataset.index;
+      const navigateToIndex = +navigateTo.dataset.index;
+      const allMenuItems = panel.querySelectorAll('.wizard-menu-item');
+
+      // Update step states
+      allMenuItems.forEach((menuItem) => {
+        const itemIndex = +menuItem.dataset.index;
+        menuItem.classList.remove('wizard-menu-active-item', 'wizard-step-completed', 'wizard-step-pending');
+
+        if (itemIndex === navigateToIndex) {
+          // Active step
+          menuItem.classList.add('wizard-menu-active-item');
+        } else if (itemIndex < navigateToIndex) {
+          // Completed steps (before active)
+          menuItem.classList.add('wizard-step-completed');
+        } else {
+          // Pending steps (after active)
+          menuItem.classList.add('wizard-step-pending');
+        }
+      });
+
+      // Update fieldset classes
       current.classList.remove('current-wizard-step');
       navigateTo.classList.add('current-wizard-step');
-      // add/remove active class from menu item
-      const navigateToMenuItem = panel.querySelector(`li[data-index="${navigateTo.dataset.index}"]`);
-      currentMenuItem.classList.remove('wizard-menu-active-item');
-      navigateToMenuItem.classList.add('wizard-menu-active-item');
+
       const event = new CustomEvent('wizard:navigate', {
         detail: {
-          prevStep: { id: current.id, index: +current.dataset.index },
-          currStep: { id: navigateTo.id, index: +navigateTo.dataset.index },
+          prevStep: { id: current.id, index: currentIndex },
+          currStep: { id: navigateTo.id, index: navigateToIndex },
         },
         bubbles: false,
       });
@@ -97,9 +116,23 @@ export class WizardLayout {
         panel.querySelector('.current-wizard-step')?.classList.remove('current-wizard-step');
         const activePanel = panel.querySelector(`#${target?.id}`);
         activePanel?.classList.add('current-wizard-step');
-        // for active menu item
-        panel.querySelector('.wizard-menu-active-item')?.classList.remove('wizard-menu-active-item');
-        menuItems.querySelector(`[data-index="${activePanel.dataset.index}"]`)?.classList.add('wizard-menu-active-item');
+        
+        // Update all menu item states
+        const activeIndex = +activePanel.dataset.index;
+        const allMenuItems = menuItems.querySelectorAll('li');
+        allMenuItems.forEach((menuItem) => {
+          const itemIndex = +menuItem.dataset.index;
+          menuItem.classList.remove('wizard-menu-active-item', 'wizard-step-completed', 'wizard-step-pending');
+          
+          if (itemIndex === activeIndex) {
+            menuItem.classList.add('wizard-menu-active-item');
+          } else if (itemIndex < activeIndex) {
+            menuItem.classList.add('wizard-step-completed');
+          } else {
+            menuItem.classList.add('wizard-step-pending');
+          }
+        });
+        
         target.querySelector('[data-active="true"]')?.focus();
       }
     });
@@ -147,7 +180,17 @@ export class WizardLayout {
     if (children.length) {
       // create wizard menu
       const wizardMenu = WizardLayout.createMenu(Array.from(children));
-      wizardMenu.querySelector('li').classList.add('wizard-menu-active-item');
+      const menuItems = wizardMenu.querySelectorAll('li');
+      
+      // Set initial states: first step is active, others are pending
+      menuItems.forEach((menuItem, index) => {
+        if (index === 0) {
+          menuItem.classList.add('wizard-menu-active-item');
+        } else {
+          menuItem.classList.add('wizard-step-pending');
+        }
+      });
+
       // Insert the menu before the first child of the wizard
       panel.insertBefore(wizardMenu, children[0]);
       WizardLayout.attachMutationObserver(panel);
