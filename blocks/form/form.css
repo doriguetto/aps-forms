@@ -386,6 +386,11 @@ main .form input[type="radio"] {
     z-index: 1;
 }
 
+main .form input[type="checkbox"]:checked {
+    accent-color: var(--form-button-background-color);
+    background-color: var(--form-button-background-color);
+}
+
 main .form fieldset:not(.checkbox-group-wrapper, .radio-group-wrapper) legend {
     font-weight: var(--form-fieldset-legend-font-weight);
     font-size: var(--form-fieldset-legend-font-size);
