@@ -1103,7 +1103,7 @@ main div.form-wrapper {
     padding: var(--form-padding);
     border-radius: var(--form-input-border-radius);
     box-shadow: var(--form-container-shadow);
-    border: 1px solid var(--brand-corporate-gray-lighter);
+    border: none;
 }
 
 /* Responsive adjustments for mobile */
