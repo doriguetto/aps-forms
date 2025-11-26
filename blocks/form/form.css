@@ -1,6 +1,6 @@
 :root {
     /* Corporate PDF-Inspired Theme Tokens */
-    
+
     /* Brand Colors - Professional Banking Palette */
     --brand-corporate-black: #000;
     --brand-corporate-gray-dark: #333;
@@ -22,13 +22,13 @@
     --button-primary-color: var(--brand-corporate-yellow);
     --button-secondary-color: var(--brand-corporate-gray);
     --button-primary-hover-color: #e6b800;
-    
+
     /* Typography - Professional & Readable */
     --form-font-size-m: 16px;
     --form-font-size-s: 14px;
     --form-font-size-xs: 12px;
     --form-label-font-family: "Noto Sans", arial, sans-serif;
-    
+
     /* Form Container */
     --form-background-color: var(--background-color-primary);
     --form-padding: 24px;
@@ -36,13 +36,13 @@
     --form-width: 100%;
     --form-max-width: 900px;
     --form-container-shadow: 0 1px 3px rgb(0 0 0 / 8%);
-    
+
     /* Field Layout & Spacing */
     --form-field-horz-gap: 20px;
     --form-field-vert-gap: 16px;
     --form-field-spacing: 16px;
     --form-field-gap: 6px;
-    
+
     /* Input Fields - Minimal & Professional */
     --form-input-padding: 10px 12px;
     --form-input-font-size: 14px;
@@ -57,7 +57,7 @@
     --form-input-text-color: var(--brand-corporate-gray-dark);
     --form-input-placeholder-color: var(--brand-corporate-gray-medium);
     --form-input-min-height: 40px;
-    
+
     /* Input States */
     --form-input-focus-ring-color: rgb(0 0 0 / 10%);
     --form-input-focus-ring-width: 2px;
@@ -65,11 +65,13 @@
     --form-input-disabled-background: var(--brand-corporate-gray-lightest);
     --form-input-disabled-border-color: var(--brand-corporate-gray-lighter);
     --form-input-disabled-text-color: var(--brand-corporate-gray-medium);
-    --form-input-readonly-background-color: var(--brand-corporate-gray-lightest);
+    --form-input-readonly-background-color: var(
+        --brand-corporate-gray-lightest
+    );
     --form-input-readonly-border-color: var(--brand-corporate-gray-light);
     --form-input-readonly-text-color: var(--brand-corporate-gray);
     --form-invalid-border-color: var(--brand-error-red);
-    
+
     /* Label Styling - Clear Hierarchy */
     --form-label-color: var(--label-color);
     --form-label-color-primary: var(--brand-corporate-gray-dark);
@@ -78,7 +80,7 @@
     --form-label-font-weight: 600;
     --form-label-font-weight-primary: 600;
     --form-label-margin-bottom: 6px;
-    
+
     /* Paragraph & Help Text */
     --form-paragraph-color: var(--brand-corporate-gray);
     --form-paragraph-margin: 0 0 12px;
@@ -87,7 +89,7 @@
     --form-helper-text-color: var(--brand-corporate-gray);
     --form-helper-text-font-size: 12px;
     --form-helper-text-margin-top: 4px;
-    
+
     /* Fieldset & Legend */
     --form-title-font-weight: 700;
     --form-fieldset-border: 0;
@@ -98,7 +100,7 @@
     --form-fieldset-legend-font-weight: 700;
     --form-fieldset-legend-border: none;
     --form-fieldset-legend-padding: 0 0 12px 0;
-    
+
     /* Buttons - Professional & Accessible */
     --form-button-color: var(--brand-corporate-black);
     --form-button-font-size: 14px;
@@ -110,23 +112,25 @@
     --form-button-padding: 12px 32px;
     --form-button-min-width: 120px;
     --form-submit-width: auto;
-    
+
     /* Secondary Button */
     --form-button-secondary-color: var(--brand-corporate-gray-dark);
     --form-button-secondary-background: var(--brand-corporate-white);
     --form-button-secondary-border: 1px solid var(--brand-corporate-gray);
-    --form-button-secondary-hover-background: var(--brand-corporate-gray-lightest);
-    
+    --form-button-secondary-hover-background: var(
+        --brand-corporate-gray-lightest
+    );
+
     /* File Upload */
     --form-upload-color: var(--brand-corporate-gray-dark);
     --form-upload-font-size: var(--form-font-size-xs);
     --form-upload-background-color: var(--background-color-primary);
-    
+
     /* Error State */
     --form-error-text-color: var(--brand-error-red);
     --form-error-icon-size: 20px;
     --form-input-error-icon-offset: 10px;
-    
+
     /* Card/Radio/Checkbox Group Styling */
     --form-card-border-color: var(--brand-corporate-gray-light);
     --form-card-border-radius: 2px;
@@ -138,7 +142,7 @@
     --form-card-selected-background: var(--brand-corporate-gray-lightest);
     --form-card-selected-shadow: 0 0 0 2px var(--brand-corporate-black);
     --form-card-transition: all 0.1s ease-in-out;
-    
+
     /* Wizard Styling */
     --form-wizard-border: 0;
     --form-wizard-background-color: var(--background-color-primary);
@@ -151,7 +155,7 @@
     --form-wizard-circle-size: 40px;
     --form-wizard-line-height: 2px;
     --form-wizard-active-color: var(--brand-corporate-yellow);
-    --form-wizard-completed-color: #5B2C6F;
+    --form-wizard-completed-color: #5b2c6f;
     --form-wizard-pending-color: var(--brand-corporate-gray-light);
     --form-wizard-line-color: var(--brand-corporate-gray-light);
 }
@@ -255,7 +259,8 @@ main .form textarea,
 main .form select {
     font-family: var(--form-label-font-family);
     background-color: var(--form-input-background-color);
-    border: var(--form-input-border-size) solid var(--form-input-border-color-base);
+    border: var(--form-input-border-size) solid
+        var(--form-input-border-color-base);
     width: 100%;
     height: auto;
     min-height: var(--form-input-min-height);
@@ -287,7 +292,8 @@ main .form textarea:focus,
 main .form select:focus {
     outline: none;
     border-color: var(--form-input-border-color-focus);
-    box-shadow: 0 0 0 var(--form-input-focus-ring-width) var(--form-input-focus-ring-color);
+    box-shadow: 0 0 0 var(--form-input-focus-ring-width)
+        var(--form-input-focus-ring-color);
 }
 
 /* Disabled state */
@@ -771,7 +777,7 @@ main .form form .wizard .wizard-button-wrapper .field-wrapper {
 .wizard-menu-items {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 0;
     flex-wrap: nowrap;
     list-style: none;
@@ -795,20 +801,21 @@ main .form form .wizard .wizard-menu-item {
     text-align: center;
     color: transparent;
     font-size: 0;
-    margin-top: calc(var(--form-wizard-circle-size) + 10px);
 }
 
-/* Show label only for active step */
+/* Hide label for active step */
 main .form form .wizard .wizard-menu-active-item {
-    color: var(--form-fieldset-legend-color);
-    font-size: var(--form-fieldset-legend-font-size);
+    color: transparent;
+    font-size: 0;
 }
 
 /* Connecting line between steps */
 main .form form .wizard .wizard-menu-item:not(:last-child)::after {
-    content: '';
+    content: "";
     position: absolute;
-    top: calc(var(--form-wizard-circle-size) / 2 - var(--form-wizard-line-height) / 2);
+    top: calc(
+        var(--form-wizard-circle-size) / 2 - var(--form-wizard-line-height) / 2
+    );
     left: calc(50% + var(--form-wizard-circle-size) / 2);
     width: calc(100% - var(--form-wizard-circle-size));
     height: var(--form-wizard-line-height);
@@ -817,7 +824,11 @@ main .form form .wizard .wizard-menu-item:not(:last-child)::after {
 }
 
 /* Completed step line */
-main .form form .wizard .wizard-menu-item.wizard-step-completed:not(:last-child)::after {
+main
+    .form
+    form
+    .wizard
+    .wizard-menu-item.wizard-step-completed:not(:last-child)::after {
     background-color: var(--form-wizard-completed-color);
 }
 
@@ -869,7 +880,7 @@ main .form form .wizard .wizard-menu-item.wizard-step-pending::before {
     main .form button {
         width: auto;
     }
-    
+
     main .form {
         padding: 32px;
     }
