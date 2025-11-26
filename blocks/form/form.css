@@ -763,15 +763,59 @@ main .form form .wizard > fieldset:not(.current-wizard-step) {
 
 main .form form .wizard .wizard-button-wrapper {
     display: flex;
-    justify-content: end;
-    gap: 50px;
-    margin: var(--form-wizard-padding) 0;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 var(--form-wizard-padding) 0;
     width: 100%;
     grid-column: span 12;
 }
 
 main .form form .wizard .wizard-button-wrapper .field-wrapper {
     flex: unset;
+}
+
+/* Style wizard navigation buttons as simple text links */
+main .form form .wizard .wizard-button-wrapper button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-width: unset;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+
+main .form form .wizard .wizard-button-wrapper button:hover:not(:disabled) {
+    background: transparent;
+    border: none;
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
+main .form form .wizard .wizard-button-wrapper button:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    background: transparent;
+    border: none;
+}
+
+main .form form .wizard .wizard-button-wrapper button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+main .form form .wizard .wizard-button-wrapper button[disabled]:hover {
+    opacity: 0.5;
+    text-decoration: none;
+}
+
+/* Add left arrow for Back button */
+main .form form .wizard .wizard-button-wrapper #wizard-button-prev::before {
+    content: "← ";
+    margin-right: 0.25em;
 }
 
 .wizard-menu-items {
