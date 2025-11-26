@@ -16,6 +16,10 @@ Strategic decision-making frameworks, refactoring methodologies, enterprise cons
 
 Testing strategies, coverage approaches, quality assurance patterns, test architecture, and validation frameworks.
 
+### 🎨 [CSS Styling](css-styling.md)
+
+Styling patterns, theme decisions, and visual system guidelines.
+
 <!-- Additional categories will be added here as they are created -->
 
 ## 🎯 AI Context Loading Strategy

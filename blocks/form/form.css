@@ -11,6 +11,7 @@
     --brand-corporate-gray-lightest: #f5f5f5;
     --brand-corporate-white: #fff;
     --brand-corporate-yellow: #fc0;
+    --brand-corporate-red: #e62e43;
     --brand-error-red: #c00;
     --brand-success-green: #060;
 
@@ -19,9 +20,9 @@
     --label-color: var(--brand-corporate-gray-dark);
     --border-color: var(--brand-corporate-gray-light);
     --form-error-color: var(--brand-error-red);
-    --button-primary-color: var(--brand-corporate-yellow);
+    --button-primary-color: #e62e43;
     --button-secondary-color: var(--brand-corporate-gray);
-    --button-primary-hover-color: #e6b800;
+    --button-primary-hover-color: #d90432;
 
     /* Typography - Professional & Readable */
     --form-font-size-m: 16px;
@@ -102,21 +103,21 @@
     --form-fieldset-legend-padding: 0 0 12px 0;
 
     /* Buttons - Professional & Accessible */
-    --form-button-color: var(--brand-corporate-black);
-    --form-button-font-size: 14px;
+    --form-button-color: #fff;
+    --form-button-font-size: 16px;
     --form-button-font-weight: 600;
     --form-button-background-color: var(--button-primary-color);
     --form-button-background-hover-color: var(--button-primary-hover-color);
-    --form-button-border: 1px solid var(--brand-corporate-black);
-    --form-button-border-radius: 2px;
-    --form-button-padding: 12px 32px;
+    --form-button-border: 2px solid transparent;
+    --form-button-border-radius: 0;
+    --form-button-padding: 0.5em 1.2em;
     --form-button-min-width: 120px;
     --form-submit-width: auto;
 
     /* Secondary Button */
     --form-button-secondary-color: var(--brand-corporate-gray-dark);
-    --form-button-secondary-background: var(--brand-corporate-white);
-    --form-button-secondary-border: 1px solid var(--brand-corporate-gray);
+    --form-button-secondary-background: transparent;
+    --form-button-secondary-border: 2px solid var(--brand-corporate-gray);
     --form-button-secondary-hover-background: var(
         --brand-corporate-gray-lightest
     );
@@ -154,8 +155,8 @@
     --form-wizard-step-legend-font-size: 14px;
     --form-wizard-circle-size: 40px;
     --form-wizard-line-height: 2px;
-    --form-wizard-active-color: var(--brand-corporate-yellow);
-    --form-wizard-completed-color: #5b2c6f;
+    --form-wizard-active-color: var(--brand-corporate-red);
+    --form-wizard-completed-color: var(--brand-corporate-gray-light);
     --form-wizard-pending-color: var(--brand-corporate-gray-light);
     --form-wizard-line-color: var(--brand-corporate-gray-light);
 }
@@ -622,6 +623,8 @@ main .form button {
     transition: background-color 0.1s ease, border-color 0.1s ease;
     text-transform: none;
     letter-spacing: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 main form .file-wrapper > button {
@@ -667,7 +670,6 @@ main .form button:disabled {
 
 main .form button:hover:not(:disabled) {
     background: var(--form-button-background-hover-color);
-    border-color: var(--brand-corporate-black);
 }
 
 main .file-wrapper.decorated input[type="file"] {
